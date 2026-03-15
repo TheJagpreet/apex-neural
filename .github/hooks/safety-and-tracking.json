@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/pre-tool-guard.sh",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/post-edit-lint.sh",
+        "timeout": 30
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/session-init.sh",
+        "timeout": 10
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/subagent-tracker.sh",
+        "timeout": 5
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/subagent-tracker.sh",
+        "timeout": 5
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./scripts/hooks/phase-gate.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}

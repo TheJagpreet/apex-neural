@@ -1,0 +1,22 @@
+{
+  "reader": {
+    "tools": ["codebase", "search", "readFile", "problems", "usages", "listDirectory", "fileSearch"],
+    "description": "Read-only tools for exploring and analyzing code",
+    "icon": "book"
+  },
+  "writer": {
+    "tools": ["editFiles", "createFile", "createDirectory"],
+    "description": "Tools for creating and modifying files",
+    "icon": "edit"
+  },
+  "runner": {
+    "tools": ["runInTerminal", "getTerminalOutput", "problems"],
+    "description": "Tools for running commands and checking diagnostics",
+    "icon": "terminal"
+  },
+  "workflow": {
+    "tools": ["runSubagent", "memory"],
+    "description": "Tools for agent orchestration and memory management",
+    "icon": "symbol-event"
+  }
+}
