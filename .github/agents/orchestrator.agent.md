@@ -2,7 +2,7 @@
 name: Orchestrator
 description: "Deterministic coding workflow coordinator: Planning → Architecture → Solutioning → Testing"
 tools: ['agent', 'vscode/memory', 'read/readFile', 'search', 'search/codebase', 'read/problems', 'web/fetch', 'search/listDirectory']
-agents: ['Planner', 'Architect', 'Solutioner', 'Tester']
+agents: ['Planner', 'Architect', 'Solutioner', 'Tester', 'Maintenance']
 handoffs:
   - label: "Quick Plan"
     agent: Planner
@@ -15,6 +15,10 @@ handoffs:
   - label: "Direct to Testing"
     agent: Tester
     prompt: "Create tests for the changes described above."
+    send: false
+  - label: "Run Maintenance"
+    agent: Maintainance
+    prompt: "Check for overdue maintenance tasks and run them. Report results."
     send: false
 hooks:
   SessionStart:
