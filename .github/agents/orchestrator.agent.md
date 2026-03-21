@@ -51,28 +51,28 @@ Every task MUST flow through these phases in order. Do NOT skip phases.
 - Delegate the task to the **Planner** subagent
 - The Planner will analyze the request, explore the codebase, and produce a structured plan
 - Review the plan output for completeness
-- Save the plan to session memory: `/memories/session/current-plan.md`
+- Save the plan to session memory: `.github/memory/planner/current-plan-<YYYYMMDD-HHMMSS>.md`
 
 ### Phase 2: ARCHITECTURE (via Architect subagent)
 - Delegate the plan to the **Architect** subagent
 - The Architect validates the plan against codebase patterns, identifies reusable code, and flags risks
 - If the Architect identifies issues, send feedback to the **Planner** to revise the plan
 - Iterate between Planning and Architecture until the plan converges
-- Save the architecture decision to session memory: `/memories/session/architecture-decision.md`
+- Save the architecture decision to session memory: `.github/memory/architect/architecture-decision-<YYYYMMDD-HHMMSS>.md`
 
 ### Phase 3: SOLUTIONING (via Solutioner subagent)
 - Delegate each task from the approved plan to the **Solutioner** subagent
 - The Solutioner implements code changes following the architecture decisions
 - For large changes, break into smaller chunks and delegate sequentially
 - After each chunk, verify the Solutioner's output against the plan
-- Save implementation progress to session memory: `/memories/session/implementation-log.md`
+- Save implementation progress to session memory: `.github/memory/solutioner/implementation-log-<YYYYMMDD-HHMMSS>.md`
 
 ### Phase 4: TESTING (via Tester subagent)
 - Delegate the implemented changes to the **Tester** subagent
 - The Tester writes and runs tests, validates the implementation
 - If tests fail, send the failures back to the **Solutioner** for fixes
 - Iterate between Solutioning and Testing until all tests pass
-- Save test results to session memory: `/memories/session/test-results.md`
+- Save test results to session memory: `.github/memory/tester/test-results-<YYYYMMDD-HHMMSS>.md`
 
 ## Iteration Rules
 

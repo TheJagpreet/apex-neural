@@ -32,15 +32,15 @@ fi
 # Check for existing session memory (resume support)
 RESUME_INFO=""
 if [ -f "${CWD}/.github/agents/session-state.md" ]; then
-  RESUME_INFO="Previous session state found. Check /memories/session/ for continuity."
+  RESUME_INFO="Previous session state found. Check .github/memory/ for continuity."
 fi
 
-# Check for any existing plans in session memory
+# Check for any existing plans in the new memory system
 PLAN_STATUS=""
-SESSION_MEM_DIR="${HOME}/.copilot/memories/session"
-if [ -d "$SESSION_MEM_DIR" ]; then
-  if [ -f "${SESSION_MEM_DIR}/current-plan.md" ]; then
-    PLAN_STATUS="Active plan found in session memory. Resume or start fresh."
+if [ -d "${CWD}/.github/memory/planner" ]; then
+  LATEST_PLAN=$(find "${CWD}/.github/memory/planner" -name "current-plan-*.md" -not -name "TEMPLATE.md" -type f 2>/dev/null | sort -r | head -1)
+  if [ -n "$LATEST_PLAN" ]; then
+    PLAN_STATUS="Active plan found in memory. Resume or start fresh: ${LATEST_PLAN}"
   fi
 fi
 

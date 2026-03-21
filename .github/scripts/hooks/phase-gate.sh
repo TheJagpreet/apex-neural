@@ -41,7 +41,7 @@ case "$AGENT_TYPE" in
     jq -n '{
       "hookSpecificOutput": {
         "hookEventName": "Stop",
-        "additionalContext": "Before finishing: Ensure you saved the plan to /memories/session/current-plan.md. The plan must include: Objective, Acceptance Criteria, Affected Files, Task Breakdown, Risk Assessment, and Testing Strategy."
+        "additionalContext": "Before finishing: Ensure you saved the plan to .github/memory/planner/current-plan-<YYYYMMDD-HHMMSS>.md. The plan must include: Objective, Acceptance Criteria, Affected Files, Task Breakdown, Risk Assessment, and Testing Strategy."
       }
     }'
     ;;
@@ -49,7 +49,7 @@ case "$AGENT_TYPE" in
     jq -n '{
       "hookSpecificOutput": {
         "hookEventName": "Stop",
-        "additionalContext": "Before finishing: Ensure you saved the architecture decision to /memories/session/architecture-decision.md. The review must include: Verdict (APPROVED/NEEDS_REVISION/BLOCKED), Pattern Analysis, Reuse Opportunities, and Issues Found."
+        "additionalContext": "Before finishing: Ensure you saved the architecture decision to .github/memory/architect/architecture-decision-<YYYYMMDD-HHMMSS>.md. The review must include: Verdict (APPROVED/NEEDS_REVISION/BLOCKED), Pattern Analysis, Reuse Opportunities, and Issues Found."
       }
     }'
     ;;
@@ -57,7 +57,7 @@ case "$AGENT_TYPE" in
     jq -n '{
       "hookSpecificOutput": {
         "hookEventName": "Stop",
-        "additionalContext": "Before finishing: Ensure you saved the implementation log to /memories/session/implementation-log.md. Check #problems for any errors. Report must include: Tasks Completed, Files Changed, and Deviations from Plan."
+        "additionalContext": "Before finishing: Ensure you saved the implementation log to .github/memory/solutioner/implementation-log-<YYYYMMDD-HHMMSS>.md. Check #problems for any errors. Report must include: Tasks Completed, Files Changed, and Deviations from Plan."
       }
     }'
     ;;
@@ -65,7 +65,7 @@ case "$AGENT_TYPE" in
     jq -n '{
       "hookSpecificOutput": {
         "hookEventName": "Stop",
-        "additionalContext": "Before finishing: Ensure you saved test results to /memories/session/test-results.md. Report must include: Test Results table, Acceptance Criteria Coverage, and Verdict (PASS/FAIL/PARTIAL)."
+        "additionalContext": "Before finishing: Ensure you saved test results to .github/memory/tester/test-results-<YYYYMMDD-HHMMSS>.md. Report must include: Test Results table, Acceptance Criteria Coverage, and Verdict (PASS/FAIL/PARTIAL)."
       }
     }'
     ;;

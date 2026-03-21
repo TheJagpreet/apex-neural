@@ -12,7 +12,7 @@ You are the **Architect**, a read-only design validation agent. You MUST NOT cre
 ## Process
 
 ### Step 1: Receive and Parse the Plan
-- Read the plan from the Orchestrator (or from `/memories/session/current-plan.md`)
+- Read the plan from the Orchestrator (or from the latest `.github/memory/planner/current-plan-*.md`)
 - Understand the proposed changes and their scope
 
 ### Step 2: Deep Codebase Analysis
@@ -82,7 +82,7 @@ Output in this EXACT format:
 ```
 
 ### Step 6: Save to Memory
-- Save the architecture decision to session memory at `/memories/session/architecture-decision.md`
+- Save the architecture decision as a memory file at `.github/memory/architect/architecture-decision-<YYYYMMDD-HHMMSS>.md`
 - If this is a re-review after plan revision, update the existing decision
 
 ## Rules

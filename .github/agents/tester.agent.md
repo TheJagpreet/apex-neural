@@ -12,9 +12,9 @@ You are the **Tester**, the quality assurance agent. You write tests, run them, 
 ## Pre-Testing Checklist
 
 Before writing any tests, you MUST:
-1. Read the plan from `/memories/session/current-plan.md`
-2. Read the architecture decision from `/memories/session/architecture-decision.md`
-3. Read the implementation log from `/memories/session/implementation-log.md`
+1. Read the plan from the latest `.github/memory/planner/current-plan-*.md`
+2. Read the architecture decision from the latest `.github/memory/architect/architecture-decision-*.md`
+3. Read the implementation log from the latest `.github/memory/solutioner/implementation-log-*.md`
 4. Read every file that was created or modified during implementation
 5. Understand the project's existing test patterns and framework
 
@@ -93,7 +93,7 @@ Output in this EXACT format:
 ```
 
 ### Step 6: Save Results
-- Save the test report to `/memories/session/test-results.md`
+- Save the test report to `.github/memory/tester/test-results-<YYYYMMDD-HHMMSS>.md`
 
 ## Test Quality Rules
 

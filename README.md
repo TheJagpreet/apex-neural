@@ -43,27 +43,27 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 - **Tools**: read-only (`read`, `search`, `codebase`, `problems`)
 - **Input**: User's task description
 - **Output**: Structured plan with tasks, affected files, risks, acceptance criteria
-- **Memory**: Saves plan to `/memories/session/current-plan.md`
+- **Memory**: Saves plan to `.github/memory/planner/current-plan-<timestamp>.md`
 
 ### Phase 2: Architecture (Architect subagent)
 - **Tools**: read-only (`read`, `search`, `codebase`, `usages`)
 - **Input**: Plan from Phase 1
 - **Output**: Architecture review with verdict (APPROVED / NEEDS_REVISION / BLOCKED)
-- **Memory**: Saves decision to `/memories/session/architecture-decision.md`
+- **Memory**: Saves decision to `.github/memory/architect/architecture-decision-<timestamp>.md`
 - **Loop**: If NEEDS_REVISION → back to Planner (max 3 iterations)
 
 ### Phase 3: Solutioning (Solutioner subagent)
 - **Tools**: full edit (`edit`, `create_file`, `replace_string_in_file`, `run_in_terminal`)
 - **Input**: Approved plan + architecture decisions
 - **Output**: Implemented code changes + implementation report
-- **Memory**: Saves log to `/memories/session/implementation-log.md`
+- **Memory**: Saves log to `.github/memory/solutioner/implementation-log-<timestamp>.md`
 - **Hook**: Post-edit linting runs automatically after every file change
 
 ### Phase 4: Testing (Tester subagent)
 - **Tools**: edit + run (`edit`, `create_file`, `run_in_terminal`, `problems`)
 - **Input**: Implementation log + changed files
 - **Output**: Test report with pass/fail, coverage, verdict
-- **Memory**: Saves results to `/memories/session/test-results.md`
+- **Memory**: Saves results to `.github/memory/tester/test-results-<timestamp>.md`
 - **Loop**: If FAIL → back to Solutioner (max 5 iterations per test)
 
 ## Determinism Mechanisms

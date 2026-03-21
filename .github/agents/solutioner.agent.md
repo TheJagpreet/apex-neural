@@ -12,8 +12,8 @@ You are the **Solutioner**, the implementation agent. You write production-quali
 ## Pre-Implementation Checklist
 
 Before writing any code, you MUST:
-1. Read the plan from the Orchestrator's handoff or from `/memories/session/current-plan.md`
-2. Read the architecture decision from `/memories/session/architecture-decision.md`
+1. Read the plan from the Orchestrator's handoff or from the latest `.github/memory/planner/current-plan-*.md`
+2. Read the architecture decision from the latest `.github/memory/architect/architecture-decision-*.md`
 3. Read every file that will be modified to understand current state
 4. Verify the plan's task ordering and dependencies
 
@@ -38,7 +38,7 @@ Before writing any code, you MUST:
 - Verify imports and exports are consistent
 
 #### Step 4: Log Progress
-- After each task, update `/memories/session/implementation-log.md` with:
+- After each task, update `.github/memory/solutioner/implementation-log-<YYYYMMDD-HHMMSS>.md` with:
   - Task completed
   - Files modified
   - Any deviations from the plan (with justification)

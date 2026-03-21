@@ -78,15 +78,15 @@ File-based, version-controlled memory with structured YAML frontmatter. Auto-ind
 
 | Phase | Artifact | Path |
 |-------|----------|------|
-| Planning | Structured plan | `/memories/session/current-plan.md` |
-| Architecture | Design review & decisions | `/memories/session/architecture-decision.md` |
-| Solutioning | Implementation log | `/memories/session/implementation-log.md` |
-| Testing | Test results & verdict | `/memories/session/test-results.md` |
+| Planning | Structured plan | `.github/memory/planner/current-plan-<timestamp>.md` |
+| Architecture | Design review & decisions | `.github/memory/architect/architecture-decision-<timestamp>.md` |
+| Solutioning | Implementation log | `.github/memory/solutioner/implementation-log-<timestamp>.md` |
+| Testing | Test results & verdict | `.github/memory/tester/test-results-<timestamp>.md` |
 
 ## Conventions
 
 - **Workflow**: All non-trivial tasks flow through Planning → Architecture → Solutioning → Testing
-- **Memory paths**: Session memory at `/memories/session/`, repo memory at `/memories/repo/`, persistent memory at `.github/memory/`
+- **Memory paths**: Session memory at `.github/memory/<agent>/`, repo memory at `.github/memory/base/`, persistent memory at `.github/memory/`
 - **Error handling**: Explicit — never silently swallow exceptions
 - **Code style**: Follow existing patterns; no new patterns without Architect approval
 - **Security**: No hardcoded secrets; parameterized queries; validate/sanitize external inputs

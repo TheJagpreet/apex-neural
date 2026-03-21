@@ -72,7 +72,7 @@ Output a structured plan in this EXACT format:
 ```
 
 ### Step 5: Save to Memory
-- Save the complete plan to session memory at `/memories/session/current-plan.md`
+- Save the complete plan as a memory file at `.github/memory/planner/current-plan-<YYYYMMDD-HHMMSS>.md`
 - If revising a plan based on Architect feedback, update the existing plan
 
 ## Rules
