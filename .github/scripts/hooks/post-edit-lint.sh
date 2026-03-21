@@ -60,6 +60,35 @@ case "$EXT" in
     ;;
 esac
 
+# --- Reactive maintenance: trigger tasks after relevant file changes ---
+
+# If a memory file was written, rebuild the memory index
+if echo "$FILE_PATH" | grep -qE '\.github/memory/.*\.md$'; then
+  if [ -f "${CWD}/.github/scripts/hooks/rebuild-memory-index.sh" ]; then
+    bash "${CWD}/.github/scripts/hooks/rebuild-memory-index.sh" "$CWD" 2>/dev/null || true
+
+    # Update schedule state so the scheduled run doesn't duplicate work
+    STATE_FILE="${CWD}/.github/memory/schedule-state.json"
+    if [ -f "$STATE_FILE" ]; then
+      NOW_EPOCH=$(date +%s)
+      NOW_ISO=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+      TMP_STATE="${STATE_FILE}.tmp"
+      jq --argjson epoch "$NOW_EPOCH" --arg iso "$NOW_ISO" \
+        '.tasks["rebuild-index"] = { "last_run_epoch": $epoch, "last_run_iso": $iso }' \
+        "$STATE_FILE" > "$TMP_STATE" && mv "$TMP_STATE" "$STATE_FILE"
+    fi
+
+    ADDITIONAL_CONTEXT="${ADDITIONAL_CONTEXT:+${ADDITIONAL_CONTEXT} | }Memory index rebuilt after memory file change."
+  fi
+fi
+
+# If schedule.json was edited, validate its structure
+if echo "$FILE_PATH" | grep -qE '\.github/schedule\.json$'; then
+  if ! jq empty "${FILE_PATH}" 2>/dev/null; then
+    ADDITIONAL_CONTEXT="${ADDITIONAL_CONTEXT:+${ADDITIONAL_CONTEXT} | }WARNING: schedule.json has invalid JSON syntax."
+  fi
+fi
+
 if [ -n "$ADDITIONAL_CONTEXT" ]; then
   jq -n --arg ctx "$ADDITIONAL_CONTEXT" '{
     "hookSpecificOutput": {

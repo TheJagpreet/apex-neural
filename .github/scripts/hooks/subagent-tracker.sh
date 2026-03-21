@@ -36,6 +36,9 @@ if [ "$EVENT" = "SubagentStart" ]; then
     Tester)
       PHASE_CONTEXT="You are in PHASE 4 (TESTING). Write and run tests. Do NOT fix production code — report issues instead."
       ;;
+    Maintenance)
+      PHASE_CONTEXT="You are running MAINTENANCE. Check scheduled tasks, execute overdue ones, and report results. Do NOT modify source code or agent definitions."
+      ;;
   esac
 
   if [ -n "$PHASE_CONTEXT" ]; then

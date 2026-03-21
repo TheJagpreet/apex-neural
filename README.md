@@ -15,26 +15,26 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 │  Coordinates all phases. Never writes code directly.            │
 │  Tools: agent, memory, read, search, codebase                   │
 │  Hooks: SessionStart, SubagentStart/Stop, Stop                  │
-└──────┬──────────┬───────────┬───────────┬───────────────────────┘
-       │          │           │           │
-  Phase 1    Phase 2     Phase 3     Phase 4
-       │          │           │           │
-       ▼          ▼           ▼           ▼
-┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐
-│ PLANNER  │ │ARCHITECT │ │SOLUTIONER │ │ TESTER   │
-│          │ │          │ │           │ │          │
-│ Read-only│ │ Read-only│ │ Full edit │ │Edit+Run  │
-│ Analyze  │ │ Validate │ │ Implement │ │ Verify   │
-│ Plan     │ │ Design   │ │ Build     │ │ Test     │
-│user-invoc│ │user-invoc│ │user-invoc │ │user-invoc│
-└─────┬────┘ └────┬─────┘ └─────┬─────┘ └────┬─────┘
-      │           │             │             │
-      ▼           ▼             ▼             ▼
-  ┌────────────────────────────────────────────────┐
-  │          SESSION MEMORY (handoff state)         │
-  │  current-plan.md → architecture-decision.md →   │
-  │  implementation-log.md → test-results.md        │
-  └────────────────────────────────────────────────┘
+└──┬──────────┬───────────┬───────────┬──────────┬────────────────┘
+   │          │           │           │          │
+ Phase 1   Phase 2    Phase 3    Phase 4    On Demand
+   │          │           │           │          │
+   ▼          ▼           ▼           ▼          ▼
+┌────────┐┌────────┐┌─────────┐┌────────┐┌─────────────┐
+│PLANNER ││ARCHITEC││SOLUTION ││ TESTER ││ MAINTENANCE │
+│        ││T       ││ER       ││        ││             │
+│Readonly││Readonly││Full edit││Edit+Run││ Run+Report  │
+│Analyze ││Validate││Implement││ Verify ││ Prune/Index │
+│Plan    ││Design  ││Build    ││ Test   ││ Health/Skill│
+└───┬────┘└───┬────┘└────┬────┘└───┬────┘└──────┬──────┘
+    │         │          │         │             │
+    ▼         ▼          ▼         ▼             ▼
+  ┌──────────────────────────────────────────────────┐
+  │          SESSION MEMORY (handoff state)           │
+  │  current-plan.md → architecture-decision.md →     │
+  │  implementation-log.md → test-results.md          │
+  │              schedule-state.json                   │
+  └──────────────────────────────────────────────────┘
 ```
 
 ## How It Works
@@ -43,27 +43,27 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 - **Tools**: read-only (`read`, `search`, `codebase`, `problems`)
 - **Input**: User's task description
 - **Output**: Structured plan with tasks, affected files, risks, acceptance criteria
-- **Memory**: Saves plan to `/memories/session/current-plan.md`
+- **Memory**: Saves plan to `.github/memory/planner/current-plan-<timestamp>.md`
 
 ### Phase 2: Architecture (Architect subagent)
 - **Tools**: read-only (`read`, `search`, `codebase`, `usages`)
 - **Input**: Plan from Phase 1
 - **Output**: Architecture review with verdict (APPROVED / NEEDS_REVISION / BLOCKED)
-- **Memory**: Saves decision to `/memories/session/architecture-decision.md`
+- **Memory**: Saves decision to `.github/memory/architect/architecture-decision-<timestamp>.md`
 - **Loop**: If NEEDS_REVISION → back to Planner (max 3 iterations)
 
 ### Phase 3: Solutioning (Solutioner subagent)
 - **Tools**: full edit (`edit`, `create_file`, `replace_string_in_file`, `run_in_terminal`)
 - **Input**: Approved plan + architecture decisions
 - **Output**: Implemented code changes + implementation report
-- **Memory**: Saves log to `/memories/session/implementation-log.md`
+- **Memory**: Saves log to `.github/memory/solutioner/implementation-log-<timestamp>.md`
 - **Hook**: Post-edit linting runs automatically after every file change
 
 ### Phase 4: Testing (Tester subagent)
 - **Tools**: edit + run (`edit`, `create_file`, `run_in_terminal`, `problems`)
 - **Input**: Implementation log + changed files
 - **Output**: Test report with pass/fail, coverage, verdict
-- **Memory**: Saves results to `/memories/session/test-results.md`
+- **Memory**: Saves results to `.github/memory/tester/test-results-<timestamp>.md`
 - **Loop**: If FAIL → back to Solutioner (max 5 iterations per test)
 
 ## Determinism Mechanisms
@@ -76,6 +76,8 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 | **Tool restrictions** | Prevent unintended actions | Planner/Architect are read-only; Solutioner can edit; Tester can edit+run |
 | **Pre-tool safety guard** | Block dangerous operations | Hook blocks destructive terminal commands and hook self-modification |
 | **Post-edit linting** | Catch errors early | Lint/format hooks run after every file edit |
+| **Reactive maintenance** | Keep indexes fresh | Memory index auto-rebuilds after memory file writes |
+| **Time-gated scheduling** | Prevent redundant work | Maintenance tasks only run when overdue based on configurable intervals |
 | **Subagent tracking** | Audit trail | All subagent start/stop events logged with timestamps |
 | **Iteration limits** | Prevent infinite loops | Max 3 plan-architect iterations, max 5 solution-test iterations |
 | **Phase-specific prompts** | Role enforcement | SubagentStart hook injects phase-specific role reminders |
@@ -89,11 +91,13 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 │   ├── planner.agent.md         # Planning agent (user-invocable)
 │   ├── architect.agent.md       # Architecture agent (user-invocable)
 │   ├── solutioner.agent.md      # Implementation agent (user-invocable)
-│   └── tester.agent.md          # Testing agent (user-invocable)
+│   ├── tester.agent.md          # Testing agent (user-invocable)
+│   └── maintenance.agent.md     # Maintenance agent (user-invocable)
 ├── hooks/
 │   └── safety-and-tracking.json # Workspace-level hooks
 ├── memory/
 │   ├── README.md                # Memory system conventions & templates
+│   ├── schedule-state.json      # Last-run timestamps for scheduled tasks
 │   ├── base/
 │   │   └── project-context.md   # Core project context (loaded on session start)
 │   ├── orchestrator/            # Orchestrator conversation memories
@@ -101,10 +105,11 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 │   ├── architect/               # Architect conversation memories
 │   ├── solutioner/              # Solutioner conversation memories
 │   └── tester/                  # Tester conversation memories
+├── schedule.json                # Task schedule definitions and intervals
 ├── scripts/
 │   └── hooks/
-│       ├── session-init.sh      # Injects project context on session start
-│       ├── post-edit-lint.sh    # Runs linter after file edits
+│       ├── session-init.sh      # Injects project context + time-gated scheduling
+│       ├── post-edit-lint.sh    # Runs linter + reactive maintenance triggers
 │       ├── pre-tool-guard.sh    # Blocks dangerous operations
 │       ├── subagent-tracker.sh  # Logs subagent lifecycle events
 │       └── phase-gate.sh        # Validates phase outputs before completion
@@ -142,6 +147,7 @@ All agents are user-invocable — you can select them directly from the VS Code 
 - **Quick Plan**: Jump directly to the Planner
 - **Direct to Architect**: Skip planning if you already have a design question
 - **Direct to Testing**: Jump to testing for existing code
+- **Run Maintenance**: Check for overdue tasks and run them
 
 For full workflow enforcement (phase gates, hooks, iteration limits), always prefer the **Orchestrator**.
 
@@ -174,6 +180,48 @@ Enable these settings for best experience:
 1. Add a script to `.github/scripts/hooks/`
 2. Make it executable: `chmod +x .github/scripts/hooks/your-hook.sh`
 3. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
+
+## Scheduled Maintenance
+
+The project includes a time-gated maintenance system that keeps the memory system, indexes, and skills healthy without requiring manual intervention.
+
+### How It Works
+
+Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init.sh` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
+
+| Task | Interval | What It Does |
+|------|---------|---------------|
+| `prune-memory` | 24h | Archives old memories, compacts unenriched auto-captures |
+| `rebuild-index` | 1h | Rebuilds the searchable memory index |
+| `memory-health` | 4h | Generates health metrics report |
+| `detect-conflicts` | 4h | Scans for unresolved memory conflicts |
+| `memory-to-skill` | 168h | Distills recurring patterns into skill updates |
+
+### Three Trigger Mechanisms
+
+1. **Time-gated (SessionStart)** — Tasks run automatically when overdue at the start of each chat session
+2. **Reactive (PostToolUse)** — Memory index auto-rebuilds whenever a memory file is created or edited
+3. **On-demand (Maintenance agent)** — Invoke the Maintenance agent directly for targeted or full maintenance runs
+
+### Customizing the Schedule
+
+Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
+
+```json
+{
+  "tasks": [
+    {
+      "name": "my-task",
+      "description": "What this task does",
+      "command": ".github/scripts/my-script.sh",
+      "interval": "12h",
+      "enabled": true
+    }
+  ]
+}
+```
+
+Supported interval units: `h` (hours), `d` (days), `m` (minutes).
 
 ## Memory System
 

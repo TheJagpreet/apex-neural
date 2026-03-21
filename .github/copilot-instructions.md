@@ -16,10 +16,10 @@ Do NOT skip phases. Every feature or bug fix flows through all four phases.
 
 ## Memory Usage
 
-- **Session memory** (`/memories/session/`): Used by the workflow agents to pass structured artifacts between phases (plans, architecture decisions, implementation logs, test results)
-- **Repository memory** (`/memories/repo/`): Store codebase conventions discovered during analysis
+- **Session memory** (`.github/memory/<agent>/`): Used by the workflow agents to pass structured artifacts between phases (plans, architecture decisions, implementation logs, test results). Each agent stores artifacts in its own folder using timestamped filenames.
+- **Repository memory** (`.github/memory/base/`): Store codebase conventions discovered during analysis
 - **Persistent memory** (`.github/memory/`): File-based, version-controlled memory that accumulates across conversations. Base context in `base/`, per-agent memories in `<agent-name>/` folders, shared cross-agent knowledge in `shared/`.
-- **User memory** (`/memories/`): Store personal preferences and cross-project patterns
+- **User memory** (`.github/memory/`): Store personal preferences and cross-project patterns
 
 ### Memory System Features
 
