@@ -3,42 +3,47 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "./scripts/hooks/pre-tool-guard.sh",
+        "command": "./.github/scripts/hooks/pre-tool-guard.sh",
         "timeout": 10
       }
     ],
     "PostToolUse": [
       {
         "type": "command",
-        "command": "./scripts/hooks/post-edit-lint.sh",
+        "command": "./.github/scripts/hooks/post-edit-lint.sh",
         "timeout": 30
       }
     ],
     "SessionStart": [
       {
         "type": "command",
-        "command": "./scripts/hooks/session-init.sh",
-        "timeout": 10
+        "command": "./.github/scripts/hooks/session-init.sh",
+        "timeout": 30
       }
     ],
     "SubagentStart": [
       {
         "type": "command",
-        "command": "./scripts/hooks/subagent-tracker.sh",
+        "command": "./.github/scripts/hooks/subagent-tracker.sh",
         "timeout": 5
       }
     ],
     "SubagentStop": [
       {
         "type": "command",
-        "command": "./scripts/hooks/subagent-tracker.sh",
+        "command": "./.github/scripts/hooks/subagent-tracker.sh",
         "timeout": 5
+      },
+      {
+        "type": "command",
+        "command": "./.github/scripts/hooks/memory-capture.sh",
+        "timeout": 10
       }
     ],
     "Stop": [
       {
         "type": "command",
-        "command": "./scripts/hooks/phase-gate.sh",
+        "command": "./.github/scripts/hooks/phase-gate.sh",
         "timeout": 10
       }
     ]

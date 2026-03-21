@@ -46,7 +46,7 @@ fi
 # Block editing of hook scripts (prevent self-modification)
 if [ "$TOOL_NAME" = "editFiles" ] || [ "$TOOL_NAME" = "create_file" ] || [ "$TOOL_NAME" = "replace_string_in_file" ]; then
   FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // .tool_input.file_path // empty')
-  if echo "$FILE_PATH" | grep -qE "(scripts/hooks/|\.github/hooks/)"; then
+  if echo "$FILE_PATH" | grep -qE "(\.github/scripts/hooks/|\.github/hooks/)"; then
     jq -n '{
       "hookSpecificOutput": {
         "hookEventName": "PreToolUse",

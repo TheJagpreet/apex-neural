@@ -19,19 +19,19 @@ handoffs:
 hooks:
   SessionStart:
     - type: command
-      command: "./scripts/hooks/session-init.sh"
+      command: "./.github/scripts/hooks/session-init.sh"
       timeout: 10
   SubagentStart:
     - type: command
-      command: "./scripts/hooks/subagent-tracker.sh"
+      command: "./.github/scripts/hooks/subagent-tracker.sh"
       timeout: 5
   SubagentStop:
     - type: command
-      command: "./scripts/hooks/subagent-tracker.sh"
+      command: "./.github/scripts/hooks/subagent-tracker.sh"
       timeout: 5
   Stop:
     - type: command
-      command: "./scripts/hooks/phase-gate.sh"
+      command: "./.github/scripts/hooks/phase-gate.sh"
       timeout: 10
 ---
 
@@ -86,6 +86,8 @@ At each phase transition, you MUST:
 1. Update session memory with the phase outcome
 2. Include a phase summary in the handoff to the next subagent
 3. On session start, check for existing session memory to resume interrupted workflows
+4. After each phase, evaluate whether any subagent discoveries should be **promoted to shared memory** (`.github/memory/shared/`). Promote if the discovery establishes a project-wide convention, pattern, or architectural decision.
+5. Check `.github/memory/shared/` and the relevant agent's memory folder before delegating to a subagent — include any relevant past context in the handoff.
 
 ## Context Isolation Strategy
 
