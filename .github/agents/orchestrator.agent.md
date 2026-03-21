@@ -17,7 +17,7 @@ handoffs:
     prompt: "Create tests for the changes described above."
     send: false
   - label: "Run Maintenance"
-    agent: Maintainance
+    agent: Maintenance
     prompt: "Check for overdue maintenance tasks and run them. Report results."
     send: false
 hooks:
