@@ -92,6 +92,22 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 │   └── tester.agent.md          # Testing agent (user-invocable)
 ├── hooks/
 │   └── safety-and-tracking.json # Workspace-level hooks
+├── memory/
+│   ├── README.md                # Memory system conventions & templates
+│   ├── base/
+│   │   └── project-context.md   # Core project context (loaded on session start)
+│   ├── orchestrator/            # Orchestrator conversation memories
+│   ├── planner/                 # Planner conversation memories
+│   ├── architect/               # Architect conversation memories
+│   ├── solutioner/              # Solutioner conversation memories
+│   └── tester/                  # Tester conversation memories
+├── scripts/
+│   └── hooks/
+│       ├── session-init.sh      # Injects project context on session start
+│       ├── post-edit-lint.sh    # Runs linter after file edits
+│       ├── pre-tool-guard.sh    # Blocks dangerous operations
+│       ├── subagent-tracker.sh  # Logs subagent lifecycle events
+│       └── phase-gate.sh        # Validates phase outputs before completion
 ├── skills/
 │   ├── codebase-analysis/
 │   │   └── SKILL.md             # Codebase analysis patterns
@@ -101,14 +117,6 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 │       └── SKILL.md             # Testing strategy & patterns
 ├── copilot-instructions.md      # Global project instructions
 └── tool-sets.json               # Grouped tool collections
-
-scripts/
-└── hooks/
-    ├── session-init.sh          # Injects project context on session start
-    ├── post-edit-lint.sh        # Runs linter after file edits
-    ├── pre-tool-guard.sh        # Blocks dangerous operations
-    ├── subagent-tracker.sh      # Logs subagent lifecycle events
-    └── phase-gate.sh            # Validates phase outputs before completion
 ```
 
 ## Usage
@@ -163,6 +171,32 @@ Enable these settings for best experience:
 3. The skill auto-loads when relevant to the conversation
 
 ### Adding a New Hook
-1. Add a script to `scripts/hooks/`
-2. Make it executable: `chmod +x scripts/hooks/your-hook.sh`
+1. Add a script to `.github/scripts/hooks/`
+2. Make it executable: `chmod +x .github/scripts/hooks/your-hook.sh`
 3. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
+
+## Memory System
+
+The project includes a persistent, version-controlled memory system in `.github/memory/` that accumulates knowledge across agent conversations.
+
+### How It Works
+
+- **Base memory** (`.github/memory/base/project-context.md`) — Canonical project context loaded on every session start. Describes what the repo is, its architecture, agents, hooks, and conventions.
+- **Agent memory** (`.github/memory/<agent>/`) — Per-agent folders where conversation memories are stored over time. Each agent builds specialized knowledge from past tasks.
+
+### Memory File Convention
+
+Files are named `<context-summary>-<YYYYMMDD-HHMMSS>.md`:
+```
+.github/memory/orchestrator/added-rest-validation-20260321-183000.md
+.github/memory/planner/refactored-auth-module-20260322-100000.md
+```
+
+### Agent Workflow with Memory
+
+1. **Session start** → Load `base/project-context.md` for foundational context
+2. **Before a task** → Check the relevant agent memory folder for related past work
+3. **After a task** → Create a new memory file capturing decisions and outcomes
+4. **On pattern discovery** → Update `base/project-context.md` if it affects project conventions
+
+See `.github/memory/README.md` for the full template and conventions.

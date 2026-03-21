@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-03-21T19:09:53Z",
+  "health_status": "healthy",
+  "summary": {
+    "total_active_memories": 1,
+    "total_archived_memories": 0,
+    "index_status": "present",
+    "index_entries": 2,
+    "needs_compaction": false,
+    "stale_agent_count": 0,
+    "empty_agent_count": 5
+  },
+  "agents": [
+    {
+      "agent": "orchestrator",
+      "active_memories": 1,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 1,
+      "newest_memory_date": "2026-03-21T19:01:36Z",
+      "newest_age_days": 0,
+      "staleness": "active"
+    },
+    {
+      "agent": "planner",
+      "active_memories": 0,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 0,
+      "newest_memory_date": "",
+      "newest_age_days": -1,
+      "staleness": "empty"
+    },
+    {
+      "agent": "architect",
+      "active_memories": 0,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 0,
+      "newest_memory_date": "",
+      "newest_age_days": -1,
+      "staleness": "empty"
+    },
+    {
+      "agent": "solutioner",
+      "active_memories": 0,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 0,
+      "newest_memory_date": "",
+      "newest_age_days": -1,
+      "staleness": "empty"
+    },
+    {
+      "agent": "tester",
+      "active_memories": 0,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 0,
+      "newest_memory_date": "",
+      "newest_age_days": -1,
+      "staleness": "empty"
+    },
+    {
+      "agent": "shared",
+      "active_memories": 0,
+      "archived_memories": 0,
+      "auto_captured": 0,
+      "manually_created": 0,
+      "newest_memory_date": "",
+      "newest_age_days": -1,
+      "staleness": "empty"
+    }
+  ]
+}
