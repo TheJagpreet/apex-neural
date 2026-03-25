@@ -39,7 +39,7 @@ function sanitizeTag(tag: string): string {
 }
 
 function escapeYaml(text: string): string {
-	return text.replace(/"/g, '\\"').replace(/\n/g, ' ');
+	return text.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ');
 }
 
 function formatTimestamp(date: Date): string {
@@ -188,6 +188,10 @@ describe('MemoryTool helpers', () => {
 
 		it('replaces newlines with spaces', () => {
 			assert.strictEqual(escapeYaml('line1\nline2'), 'line1 line2');
+		});
+
+		it('escapes backslashes', () => {
+			assert.strictEqual(escapeYaml('path\\to\\file'), 'path\\\\to\\\\file');
 		});
 	});
 

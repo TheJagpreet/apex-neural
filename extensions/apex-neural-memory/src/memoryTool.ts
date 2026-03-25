@@ -423,7 +423,7 @@ export class MemoryTool implements vscode.LanguageModelTool<IMemoryToolInput> {
 
 	/** Escape a string for safe YAML inclusion */
 	private escapeYaml(text: string): string {
-		return text.replace(/"/g, '\\"').replace(/\n/g, ' ');
+		return text.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ');
 	}
 }
 
