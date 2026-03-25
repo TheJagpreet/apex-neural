@@ -15,7 +15,7 @@
     "icon": "terminal"
   },
   "workflow": {
-    "tools": ["runSubagent", "memory"],
+    "tools": ["runSubagent", "apex-neural_memory"],
     "description": "Tools for agent orchestration and memory management",
     "icon": "symbol-event"
   }

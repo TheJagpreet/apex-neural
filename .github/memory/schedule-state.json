@@ -1,5 +1,0 @@
-{
-  "version": 1,
-  "description": "Tracks last execution time per scheduled task. Managed by session-init.sh.",
-  "tasks": {}
-}

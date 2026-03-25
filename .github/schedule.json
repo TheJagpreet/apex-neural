@@ -1,41 +1,5 @@
 {
   "version": 1,
   "description": "Scheduled maintenance tasks with configurable intervals. Tasks run on session start when overdue.",
-  "tasks": [
-    {
-      "name": "prune-memory",
-      "description": "Archive memories older than TTL and compact unenriched auto-captures",
-      "command": ".github/scripts/hooks/prune-memory.sh",
-      "interval": "24h",
-      "enabled": true
-    },
-    {
-      "name": "rebuild-index",
-      "description": "Rebuild the searchable memory index from all memory files",
-      "command": ".github/scripts/hooks/rebuild-memory-index.sh",
-      "interval": "1h",
-      "enabled": true
-    },
-    {
-      "name": "memory-health",
-      "description": "Generate memory health metrics report",
-      "command": ".github/scripts/hooks/memory-health.sh",
-      "interval": "4h",
-      "enabled": true
-    },
-    {
-      "name": "detect-conflicts",
-      "description": "Scan for unresolved memory conflicts",
-      "command": ".github/scripts/hooks/detect-memory-conflicts.sh",
-      "interval": "4h",
-      "enabled": true
-    },
-    {
-      "name": "memory-to-skill",
-      "description": "Distill recurring patterns from memories into skill updates",
-      "command": ".github/scripts/memory-to-skill.sh",
-      "interval": "168h",
-      "enabled": true
-    }
-  ]
+  "tasks": []
 }

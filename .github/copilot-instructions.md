@@ -16,22 +16,48 @@ Do NOT skip phases. Every feature or bug fix flows through all four phases.
 
 ## Memory Usage
 
-- **Session memory** (`.github/memory/<agent>/`): Used by the workflow agents to pass structured artifacts between phases (plans, architecture decisions, implementation logs, test results). Each agent stores artifacts in its own folder using timestamped filenames.
-- **Repository memory** (`.github/memory/base/`): Store codebase conventions discovered during analysis
-- **Persistent memory** (`.github/memory/`): File-based, version-controlled memory that accumulates across conversations. Base context in `base/`, per-agent memories in `<agent-name>/` folders, shared cross-agent knowledge in `shared/`.
-- **User memory** (`.github/memory/`): Store personal preferences and cross-project patterns
+Memory is managed by the **apex-neural-memory** VS Code extension, which provides the `apex-neural_memory` tool. This tool saves memories directly to the workspace folder at `.github/memory/`, ensuring they are version-controlled and accessible across sessions.
 
-### Memory System Features
+### Using the Memory Tool
 
-- **Auto-capture**: Memories are automatically generated on SubagentStop via hooks. Agents should enrich the auto-captured file before finishing.
-- **YAML frontmatter**: All memory files use structured frontmatter (agent, date, task, tags, outcome, etc.) for programmatic indexing.
-- **Searchable index**: `.github/memory/index.json` is rebuilt on session start — use it for efficient memory lookup by agent, tag, or file.
-- **Memory health**: `.github/memory/memory-health.json` tracks per-agent file counts, staleness, and compaction needs.
-- **Conflict detection**: Memories with `conflicts_with` frontmatter are surfaced at session start for resolution.
-- **Pruning**: Memories older than 90 days are auto-archived. Unenriched auto-captures are compacted after 7 days.
-- **Shared memory**: Cross-cutting discoveries are promoted to `.github/memory/shared/` by the Orchestrator.
-- **Conversation replay**: Use `continues` frontmatter to chain related sessions. Set `conversation_type: digest` for summaries.
-- **Memory → Skills**: Run `.github/scripts/memory-to-skill.sh` to analyze accumulated patterns for skill enrichment.
+Agents should use the `apex-neural_memory` tool (referenced as `#memory` in chat) with the following actions:
+
+- **store**: Save a memory with agent name, task, tags, and content
+- **recall**: Search memories by query (matches against tags, task descriptions, and content)
+- **list**: List all memories, optionally filtered by agent
+
+### Memory Structure
+
+The extension manages the following workspace structure:
+
+```
+.github/memory/
+├── <agent>/           # Per-agent memory folders (auto-created)
+│   └── <context>-<timestamp>.md
+└── shared/            # Cross-agent shared memories
+    └── <context>-<timestamp>.md
+```
+
+### Memory File Format
+
+All memory files include YAML frontmatter for structured indexing:
+
+```yaml
+---
+agent: architect
+date: "2026-03-25T10:00:00Z"
+task: "Brief task description"
+tags: [api, validation]
+outcome: completed
+---
+```
+
+### Conventions
+
+- Use the `apex-neural_memory` tool instead of `vscode/memory` for all memory operations
+- Memory files use kebab-case naming: `<context-summary>-<YYYYMMDD-HHMMSS>.md`
+- Use lowercase, single-word tags
+- Common tags: `api`, `auth`, `database`, `testing`, `security`, `performance`, `refactoring`, `bugfix`, `architecture`, `convention`
 
 ## Security
 
