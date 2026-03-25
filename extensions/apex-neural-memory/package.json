@@ -1,0 +1,103 @@
+{
+  "name": "apex-neural-memory",
+  "displayName": "Apex Neural Memory",
+  "description": "Workspace-local memory tool for the Apex Neural agent ecosystem. Stores, recalls, and lists memories as markdown files in .github/memory/.",
+  "version": "0.1.0",
+  "publisher": "apex-neural",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheJagpreet/apex-neural"
+  },
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languageModelTools": [
+      {
+        "name": "apex-neural_memory",
+        "tags": [
+          "memory",
+          "workspace",
+          "agent",
+          "apex-neural"
+        ],
+        "toolReferenceName": "memory",
+        "displayName": "Apex Neural Memory",
+        "modelDescription": "Store, recall, and list workspace-local memories for the Apex Neural agent ecosystem. Memories are saved as markdown files with YAML frontmatter in the workspace .github/memory/ folder. Use action 'store' to save a memory, 'recall' to search memories, and 'list' to list all memories.",
+        "userDescription": "Manage workspace-local agent memories (store, recall, list)",
+        "icon": "$(notebook)",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "store",
+                "recall",
+                "list"
+              ],
+              "description": "The action to perform: 'store' saves a new memory, 'recall' searches existing memories, 'list' lists all memories."
+            },
+            "agent": {
+              "type": "string",
+              "description": "Agent name for scoping the memory (e.g., orchestrator, planner, architect, solutioner, tester, shared). Defaults to 'shared' if not specified."
+            },
+            "task": {
+              "type": "string",
+              "description": "Brief description of the task or context (used in YAML frontmatter and filename)."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags for categorization and search (e.g., ['api', 'validation', 'bugfix'])."
+            },
+            "content": {
+              "type": "string",
+              "description": "The memory content in markdown format. Used when action is 'store'."
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "completed",
+                "approved",
+                "rejected",
+                "failed",
+                "partial",
+                "blocked"
+              ],
+              "description": "The outcome of the task. Used when action is 'store'. Defaults to 'completed'."
+            },
+            "query": {
+              "type": "string",
+              "description": "Search query for the 'recall' action. Matches against tags, task, and content."
+            }
+          },
+          "required": [
+            "action"
+          ]
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src/",
+    "test": "tsc -p ./ && node --test out/test/memoryTool.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/vscode": "^1.100.0",
+    "typescript": "^5.7.0"
+  }
+}
