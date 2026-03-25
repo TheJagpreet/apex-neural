@@ -33,11 +33,6 @@
         "type": "command",
         "command": "./.github/scripts/hooks/subagent-tracker.sh",
         "timeout": 5
-      },
-      {
-        "type": "command",
-        "command": "./.github/scripts/hooks/memory-capture.sh",
-        "timeout": 10
       }
     ],
     "Stop": [
