@@ -27,7 +27,7 @@
           "agent",
           "apex-neural"
         ],
-        "toolReferenceName": "memory",
+        "toolReferenceName": "apex_memory",
         "displayName": "Apex Neural Memory",
         "modelDescription": "Store, recall, and list workspace-local memories for the Apex Neural agent ecosystem. Memories are saved as markdown files with YAML frontmatter in the workspace .github/memory/ folder. Use action 'store' to save a memory, 'recall' to search memories, and 'list' to list all memories.",
         "userDescription": "Manage workspace-local agent memories (store, recall, list)",
@@ -93,11 +93,13 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src/",
-    "test": "tsc -p ./ && node --test out/test/memoryTool.test.js"
+    "test": "tsc -p ./ && node --test out/test/memoryTool.test.js",
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^22",
     "@types/vscode": "^1.100.0",
+    "@vscode/vsce": "^3.7.1",
     "typescript": "^5.7.0"
   }
 }
