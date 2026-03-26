@@ -4,5 +4,5 @@ node_modules/
 # Build output
 extensions/*/out/
 
-# VS Code extension packages
-*.vsix
+# VS Code extension packages are committed intentionally
+# *.vsix
