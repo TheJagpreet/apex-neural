@@ -22,11 +22,11 @@ Read `.github/schedule.json` for the full list of registered tasks and their int
 
 | Task | Command | Default Interval |
 |------|---------|-----------------|
-| `prune-memory` | `.github/scripts/hooks/prune-memory.sh` | 24h |
-| `rebuild-index` | `.github/scripts/hooks/rebuild-memory-index.sh` | 1h |
-| `memory-health` | `.github/scripts/hooks/memory-health.sh` | 4h |
-| `detect-conflicts` | `.github/scripts/hooks/detect-memory-conflicts.sh` | 4h |
-| `memory-to-skill` | `.github/scripts/memory-to-skill.sh` | 168h (weekly) |
+| `prune-memory` | `.github/scripts/hooks/prune-memory.ps1` | 24h |
+| `rebuild-index` | `.github/scripts/hooks/rebuild-memory-index.ps1` | 1h |
+| `memory-health` | `.github/scripts/hooks/memory-health.ps1` | 4h |
+| `detect-conflicts` | `.github/scripts/hooks/detect-memory-conflicts.ps1` | 4h |
+| `memory-to-skill` | `.github/scripts/memory-to-skill.ps1` | 168h (weekly) |
 
 ## Process
 
@@ -40,7 +40,7 @@ Read `.github/schedule.json` for the full list of registered tasks and their int
 ### Step 2: Execute Overdue Tasks
 
 For each overdue task:
-1. Run the task command via terminal: `bash <command> <cwd>`
+1. Run the task command via terminal: `powershell -ExecutionPolicy Bypass -File <command> <cwd>`
 2. Capture the output
 3. Update `.github/memory/schedule-state.json` with the new `last_run_epoch` and `last_run_iso`
 
@@ -56,10 +56,10 @@ After running tasks, report:
 ### Step 4: Handle Specific Requests
 
 If the user asks for a specific maintenance action:
-- **"prune memories"** → Run `prune-memory.sh` regardless of schedule
-- **"rebuild index"** → Run `rebuild-memory-index.sh` regardless of schedule
-- **"check health"** → Run `memory-health.sh` and report the results
-- **"run skill pipeline"** → Run `memory-to-skill.sh` and report findings
+- **"prune memories"** → Run `prune-memory.ps1` regardless of schedule
+- **"rebuild index"** → Run `rebuild-memory-index.ps1` regardless of schedule
+- **"check health"** → Run `memory-health.ps1` and report the results
+- **"run skill pipeline"** → Run `memory-to-skill.ps1` and report findings
 - **"show schedule"** → Display task schedule with next-due times
 - **"run all"** → Execute all enabled tasks regardless of schedule
 

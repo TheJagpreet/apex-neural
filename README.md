@@ -108,11 +108,11 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 ├── schedule.json                # Task schedule definitions and intervals
 ├── scripts/
 │   └── hooks/
-│       ├── session-init.sh      # Injects project context + time-gated scheduling
-│       ├── post-edit-lint.sh    # Runs linter + reactive maintenance triggers
-│       ├── pre-tool-guard.sh    # Blocks dangerous operations
-│       ├── subagent-tracker.sh  # Logs subagent lifecycle events
-│       └── phase-gate.sh        # Validates phase outputs before completion
+│       ├── session-init.ps1      # Injects project context + time-gated scheduling
+│       ├── post-edit-lint.ps1    # Runs linter + reactive maintenance triggers
+│       ├── pre-tool-guard.ps1    # Blocks dangerous operations
+│       ├── subagent-tracker.ps1  # Logs subagent lifecycle events
+│       └── phase-gate.ps1        # Validates phase outputs before completion
 ├── skills/
 │   ├── codebase-analysis/
 │   │   └── SKILL.md             # Codebase analysis patterns
@@ -178,8 +178,7 @@ Enable these settings for best experience:
 
 ### Adding a New Hook
 1. Add a script to `.github/scripts/hooks/`
-2. Make it executable: `chmod +x .github/scripts/hooks/your-hook.sh`
-3. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
+2. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
 
 ## Scheduled Maintenance
 
@@ -187,7 +186,7 @@ The project includes a time-gated maintenance system that keeps the memory syste
 
 ### How It Works
 
-Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init.sh` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
+Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init.ps1` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
 
 | Task | Interval | What It Does |
 |------|---------|---------------|
@@ -213,7 +212,7 @@ Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
     {
       "name": "my-task",
       "description": "What this task does",
-      "command": ".github/scripts/my-script.sh",
+      "command": ".github/scripts/my-script.ps1",
       "interval": "12h",
       "enabled": true
     }

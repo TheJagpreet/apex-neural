@@ -89,8 +89,8 @@ Directories are created automatically when a memory is stored.
 
 ## Development
 
-```bash
-cd extensions/apex-neural-memory
+```powershell
+cd extensions\apex-neural-memory
 npm install
 npm run compile
 ```
@@ -99,6 +99,6 @@ Press **F5** in VS Code to launch the Extension Development Host for testing.
 
 ## Building
 
-```bash
+```powershell
 npm run vscode:prepublish
 ```

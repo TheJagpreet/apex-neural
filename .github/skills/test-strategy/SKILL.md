@@ -18,12 +18,12 @@ Prioritize tests in this order (most → fewest):
 
 Before writing tests, always discover the existing setup:
 
-```bash
+```powershell
 # Find test config files
-find . -name "jest.config*" -o -name "vitest.config*" -o -name "pytest.ini" -o -name "setup.cfg" -o -name "conftest.py" -o -name "*_test.go" -o -name "*.test.*" | head -20
+Get-ChildItem -Recurse -Include "jest.config*","vitest.config*","pytest.ini","setup.cfg","conftest.py","*_test.go","*.test.*" | Select-Object -First 20 -ExpandProperty FullName
 
 # Find existing test files to learn patterns
-find . -path "*/test*" -name "*.test.*" -o -name "*_test.*" -o -name "test_*" | head -20
+Get-ChildItem -Recurse -Include "*.test.*","*_test.*","test_*" | Where-Object { $_.FullName -match 'test' } | Select-Object -First 20 -ExpandProperty FullName
 ```
 
 Read at least 2-3 existing test files to understand:
@@ -77,7 +77,7 @@ Use descriptive names that document behavior:
 
 ## Running Tests
 Always run tests and capture output:
-```bash
+```powershell
 # Common test commands by ecosystem
 npm test              # Node.js
 npx jest --verbose    # Jest specifically
