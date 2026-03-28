@@ -29,7 +29,7 @@
     {
       "name": "memory-to-skill",
       "description": "Distills recurring patterns from memories into skill updates",
-      "interval": "168h",
+      "interval": "7d",
       "enabled": true
     }
   ]
