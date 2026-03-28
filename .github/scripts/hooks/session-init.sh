@@ -45,7 +45,7 @@ if [ -f "$CWD/.github/agents/session-state.md" ]; then
 fi
 
 # Memory hint
-MEMORY_HINT="Memory: Use #memory tool (apex-neural_memory) for store/recall/list."
+MEMORY_HINT="Memory: Use #apex_neural_memory tool (apex-neural_memory) for store/recall/list."
 
 # Build final context
 ADDITIONAL="${CONTEXT}${RESUME_INFO} ${MEMORY_HINT}"

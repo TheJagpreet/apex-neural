@@ -4,14 +4,14 @@ A VS Code extension that provides a workspace-local memory tool for the Apex Neu
 
 ## Features
 
-The extension contributes a single Language Model Tool called `apex-neural_memory` (referenced as `#memory` in chat) with three actions:
+The extension contributes a single Language Model Tool called `apex-neural_memory` (referenced as `#apex_neural_memory` in chat) with three actions:
 
 ### Store
 
 Save a new memory as a markdown file with YAML frontmatter.
 
 ```
-#memory store a new memory for the architect agent about the API design patterns we discovered
+#apex_neural_memory store a new memory for the architect agent about the API design patterns we discovered
 ```
 
 **Parameters:**
@@ -27,7 +27,7 @@ Save a new memory as a markdown file with YAML frontmatter.
 Search existing memories by query string. Matches against tags, task descriptions, agent names, and content.
 
 ```
-#memory recall memories about API validation
+#apex_neural_memory recall memories about API validation
 ```
 
 **Parameters:**
@@ -40,7 +40,7 @@ Search existing memories by query string. Matches against tags, task description
 List all memories, optionally filtered by agent.
 
 ```
-#memory list all memories for the tester agent
+#apex_neural_memory list all memories for the tester agent
 ```
 
 **Parameters:**
