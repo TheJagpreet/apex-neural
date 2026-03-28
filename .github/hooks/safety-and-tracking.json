@@ -3,42 +3,42 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/pre-tool-guard.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js pre-tool-guard",
         "timeout": 10
       }
     ],
     "PostToolUse": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/post-edit-lint.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js post-edit-lint",
         "timeout": 30
       }
     ],
     "SessionStart": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/session-init.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js session-init",
         "timeout": 30
       }
     ],
     "SubagentStart": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/subagent-tracker.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js subagent-tracker",
         "timeout": 5
       }
     ],
     "SubagentStop": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/subagent-tracker.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js subagent-tracker",
         "timeout": 5
       }
     ],
     "Stop": [
       {
         "type": "command",
-        "command": "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/phase-gate.ps1",
+        "command": "node ./.github/scripts/hooks/run-hook.js phase-gate",
         "timeout": 10
       }
     ]

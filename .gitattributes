@@ -1,0 +1,23 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Force LF line endings for all script files (cross-platform compatibility)
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Windows-specific files keep CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary files — do not touch
+*.vsix binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
