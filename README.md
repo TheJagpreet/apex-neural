@@ -31,6 +31,7 @@ It prevents context loss, hallucination, and scope drift by enforcing determinis
 - [Determinism Mechanisms](#-determinism-mechanisms)
 - [Scheduled Maintenance](#-scheduled-maintenance)
 - [Customization](#-customization)
+- [Agent Plugin (Preview)](#-agent-plugin-preview)
 - [VS Code Settings](#-vs-code-settings)
 - [Repository Structure](#-repository-structure)
 
@@ -481,6 +482,68 @@ Tool sets group related tools for easy assignment to agents. Defined in `.github
 
 ---
 
+---
+
+## 🔌 Agent Plugin (Preview)
+
+Apex Neural can be installed as a **VS Code Copilot agent plugin**, making it discoverable and manageable directly from VS Code's Extensions sidebar. This is an alternative to the manual [setup script](#-quick-start) approach.
+
+> **Note:** Agent plugins require VS Code 1.100+ with `chat.plugins.enabled` set to `true`.
+
+### Install from Source
+
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+2. Run **Chat: Install Plugin From Source**
+3. Enter the repository URL:
+   ```
+   https://github.com/TheJagpreet/apex-neural
+   ```
+
+VS Code clones the repository and registers its agents, skills, and hooks automatically.
+
+### Install as a Local Plugin
+
+If you've already cloned the repo, register it as a local plugin in your VS Code settings:
+
+```json
+// settings.json
+"chat.pluginLocations": {
+    "/path/to/apex-neural": true
+}
+```
+
+### What the Plugin Provides
+
+The `plugin.json` manifest at the repository root declares the following components:
+
+| Component | Path | Description |
+|-----------|------|-------------|
+| **Agents** | `.github/agents/` | Orchestrator, Planner, Architect, Solutioner, Tester, Maintenance |
+| **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy |
+| **Hooks** | `.github/hooks/safety-and-tracking.json` | Pre-tool guard, post-edit lint, session init, subagent tracker, phase gate |
+
+### Manage the Plugin
+
+- **Enable/Disable**: Right-click the plugin in the **Agent Plugins - Installed** view in the Extensions sidebar
+- **Browse plugins**: Search `@agentPlugins` in the Extensions view
+- **Uninstall**: Right-click → Uninstall from the Extensions sidebar
+
+> **Important:** The plugin bundles hooks that execute shell commands. Review the contents before installing.
+
+### Plugin vs Setup Script
+
+| Feature | Plugin Install | Setup Script |
+|---------|----------------|--------------|
+| **Installation** | One command from VS Code | Run `node scripts/setup.js` |
+| **Updates** | Automatic via Extensions | Re-run setup script |
+| **Scope** | User-level (all workspaces) | Per-workspace |
+| **Memory extension** | Install separately | Prompted during setup |
+| **Requires** | VS Code 1.100+, `chat.plugins.enabled` | Node.js 18+ |
+
+Both methods require the **apex-neural-memory** VS Code extension for the memory system.
+
+---
+
 ## ⚙ VS Code Settings
 
 Enable these settings for the best experience:
@@ -488,7 +551,8 @@ Enable these settings for the best experience:
 ```json
 {
   "chat.useCustomAgentHooks": true,
-  "chat.agent.thinking.collapsedTools": false
+  "chat.agent.thinking.collapsedTools": false,
+  "chat.plugins.enabled": true
 }
 ```
 
@@ -500,6 +564,7 @@ Ensure the **apex-neural-memory** extension is installed (the setup script offer
 
 ```
 apex-neural/
+├── plugin.json                              # Agent plugin manifest (VS Code Copilot)
 ├── .github/
 │   ├── agents/                          # Agent definitions
 │   │   ├── orchestrator.agent.md          # Main coordinator
