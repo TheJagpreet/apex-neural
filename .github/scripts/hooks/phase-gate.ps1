@@ -59,6 +59,14 @@ $Result = switch ($AgentType) {
             }
         }
     }
+    'SkillCreator' {
+        @{
+            hookSpecificOutput = @{
+                hookEventName = "Stop"
+                additionalContext = "Before finishing: Ensure you saved the skill creation result using the #apex_neural_memory tool (apex_neural_memory). Report must include: Skill Name, Skill Path, Registration Status (added to plugin.json), and Validation Checklist."
+            }
+        }
+    }
     default { $null }
 }
 
