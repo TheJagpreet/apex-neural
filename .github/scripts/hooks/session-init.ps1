@@ -38,8 +38,8 @@ if (Test-Path (Join-Path $Cwd ".github\agents\session-state.md")) {
 }
 
 # Memory is managed by the apex-neural-memory VS Code extension.
-# Use the apex-neural_memory tool (#apex_neural_memory) for store/recall/list operations.
-$MemoryHint = "Memory: Use #apex_neural_memory tool (apex-neural_memory) for store/recall/list."
+# Use the apex_neural_memory tool (#apex_neural_memory) for store/recall/list operations.
+$MemoryHint = "Memory: Use #apex_neural_memory tool (apex_neural_memory) for store/recall/list."
 
 # Build final context
 $Additional = "$Context$ResumeInfo $MemoryHint"

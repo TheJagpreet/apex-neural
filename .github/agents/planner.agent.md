@@ -2,7 +2,7 @@
 name: Planner
 description: "Analyzes tasks and creates structured implementation plans"
 user-invocable: true
-tools: ['read/readFile', 'search', 'search/codebase', 'read/problems', 'apex-neural_memory', 'search/usages', 'web/fetch', 'search/listDirectory']
+tools: ['read/readFile', 'search', 'search/codebase', 'read/problems', 'apex_neural_memory', 'search/usages', 'web/fetch', 'search/listDirectory']
 ---
 
 # Planner Agent — Task Decomposition & Planning

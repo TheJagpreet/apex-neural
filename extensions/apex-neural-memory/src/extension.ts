@@ -3,7 +3,7 @@ import { MemoryTool } from './memoryTool';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.lm.registerTool('apex-neural_memory', new MemoryTool())
+		vscode.lm.registerTool('apex_neural_memory', new MemoryTool())
 	);
 }
 

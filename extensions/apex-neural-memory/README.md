@@ -4,7 +4,7 @@ A VS Code extension that provides a workspace-local memory tool for the Apex Neu
 
 ## Features
 
-The extension contributes a single Language Model Tool called `apex-neural_memory` (referenced as `#apex_neural_memory` in chat) with three actions:
+The extension contributes a single Language Model Tool called `apex_neural_memory` (referenced as `#apex_neural_memory` in chat) with three actions:
 
 ### Store
 

@@ -20,7 +20,7 @@
   "contributes": {
     "languageModelTools": [
       {
-        "name": "apex-neural_memory",
+        "name": "apex_neural_memory",
         "tags": [
           "memory",
           "workspace",
