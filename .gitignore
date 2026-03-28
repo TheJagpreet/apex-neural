@@ -6,3 +6,6 @@ extensions/*/out/
 
 # VS Code extension packages are committed intentionally
 # *.vsix
+
+# Runtime artifacts
+.github/audit/
