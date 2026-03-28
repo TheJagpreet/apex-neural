@@ -324,9 +324,9 @@ async function main() {
     info("Next steps:");
     log(`  1. Open the workspace folder in VS Code`);
     log(`  2. Enable these settings in your VS Code settings:`);
-    log(`     ${CYAN}"github.copilot.chat.tools.memory.enabled": true${RESET}`);
     log(`     ${CYAN}"chat.useCustomAgentHooks": true${RESET}`);
-    log(`  3. Open VS Code Chat and select ${BOLD}Orchestrator${RESET} to get started`);
+    log(`  3. Ensure the ${BOLD}apex-neural-memory${RESET} extension is installed`);
+    log(`  4. Open VS Code Chat and select ${BOLD}Orchestrator${RESET} to get started`);
     log("");
   } finally {
     rl.close();

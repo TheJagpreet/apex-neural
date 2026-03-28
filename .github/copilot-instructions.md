@@ -20,7 +20,7 @@ Memory is managed by the **apex-neural-memory** VS Code extension, which provide
 
 ### Using the Memory Tool
 
-Agents should use the `apex-neural_memory` tool (referenced as `#memory` in chat) with the following actions:
+Agents should use the `apex-neural_memory` tool (referenced as `#apex_memory` in chat) with the following actions:
 
 - **store**: Save a memory with agent name, task, tags, and content
 - **recall**: Search memories by query (matches against tags, task descriptions, and content)
@@ -54,7 +54,7 @@ outcome: completed
 
 ### Conventions
 
-- Use the `apex-neural_memory` tool instead of `vscode/memory` for all memory operations
+- Use the `apex-neural_memory` tool (referenced as `#apex_memory` in chat) for all memory operations — do not use the built-in `vscode/memory`
 - Memory files use kebab-case naming: `<context-summary>-<YYYYMMDD-HHMMSS>.md`
 - Use lowercase, single-word tags
 - Common tags: `api`, `auth`, `database`, `testing`, `security`, `performance`, `refactoring`, `bugfix`, `architecture`, `convention`
