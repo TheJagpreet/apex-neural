@@ -231,6 +231,7 @@ async function main() {
 
     const destGithub = path.join(workspaceRoot, ".github");
     const destReadme = path.join(destGithub, "apex-neural-README.md");
+    const fileCount = countFiles(sourceGithub);
 
     // ── Summary ─────────────────────────────────────────────────────────
     log("");
@@ -240,7 +241,7 @@ async function main() {
       `  ${BOLD}1.${RESET} Copy ${CYAN}.github/${RESET} → ${CYAN}${destGithub}${RESET}`
     );
     log(
-      `     (${countFiles(sourceGithub)} files)`
+      `     (${fileCount} files)`
     );
     log(
       `  ${BOLD}2.${RESET} Copy ${CYAN}README.md${RESET} → ${CYAN}${destReadme}${RESET}`
@@ -296,11 +297,11 @@ async function main() {
             stdio: "inherit",
           });
           success("apex-neural-memory extension installed.");
-        } catch {
+        } catch (err) {
           warn("Could not install the extension automatically.");
-          warn(
-            "This usually means the 'code' CLI is not in your PATH."
-          );
+          if (err.message) {
+            warn(`Reason: ${err.message}`);
+          }
           log("");
           info("To install manually, run:");
           log(
