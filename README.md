@@ -254,7 +254,9 @@ Maintenance tasks are defined in `.github/schedule.json` with configurable inter
 
 ### Customizing the Schedule
 
-Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
+Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks.
+
+> **Note:** Hook scripts are cross-platform. Add both a `.ps1` and `.sh` variant in `.github/scripts/hooks/`, then reference them via the cross-platform runner in the `command` field.
 
 ```json
 {
@@ -262,15 +264,13 @@ Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
     {
       "name": "my-task",
       "description": "What this task does",
-      "command": ".github/scripts/hooks/my-script",
+      "command": "node ./.github/scripts/hooks/run-hook.js my-script",
       "interval": "12h",
       "enabled": true
     }
   ]
 }
 ```
-
-> **Note:** Provide the hook name without extension. The cross-platform runner (`run-hook.js`) automatically selects `.ps1` on Windows or `.sh` on Linux/Mac.
 
 Supported interval units: `h` (hours), `d` (days), `m` (minutes).
 
