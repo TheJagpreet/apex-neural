@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js pre-tool-guard",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js post-edit-lint",
+        "timeout": 30
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js session-init",
+        "timeout": 30
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js subagent-tracker",
+        "timeout": 5
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js subagent-tracker",
+        "timeout": 5
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node ${CLAUDE_PLUGIN_ROOT}/.github/scripts/hooks/run-hook.js phase-gate",
+        "timeout": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "apex-neural",
+  "description": "Deterministic multi-agent coding workflow for VS Code — Planning → Architecture → Implementation → Testing with persistent memory, lifecycle hooks, and context-isolated subagents.",
+  "version": "1.0.0",
+  "author": {
+    "name": "TheJagpreet",
+    "url": "https://github.com/TheJagpreet"
+  },
+  "homepage": "https://github.com/TheJagpreet/apex-neural",
+  "repository": "https://github.com/TheJagpreet/apex-neural",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "deterministic",
+    "planning",
+    "architecture",
+    "testing",
+    "memory",
+    "hooks",
+    "copilot",
+    "vscode"
+  ],
+  "category": "developer-tools",
+  "agents": ".github/agents/",
+  "skills": [
+    ".github/skills/codebase-analysis",
+    ".github/skills/implementation-patterns",
+    ".github/skills/test-strategy"
+  ],
+  "hooks": "hooks.json"
+}
