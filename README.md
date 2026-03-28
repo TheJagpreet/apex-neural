@@ -2,6 +2,48 @@
 
 A deterministic, multi-phase coding agent workflow built on VS Code's Copilot agent infrastructure. Prevents context loss, hallucination, and scope drift by enforcing structured phases with memory handoffs, hooks for enforcement, and context-isolated subagents.
 
+## Prerequisites
+
+- **Node.js** (v18 or later) — Required for the setup script and cross-platform hook runner
+- **VS Code** — With GitHub Copilot Chat enabled
+
+## Workspace Setup
+
+Apex Neural is designed to sit alongside other repos in a shared workspace:
+
+```
+workspace/
+├── .github/          ← Apex Neural agents, hooks, skills (installed by setup)
+├── apex-neural/      ← this repo
+├── your-project-1/
+├── your-project-2/
+└── ...
+```
+
+### Quick Start
+
+1. Clone this repo into your workspace directory:
+   ```bash
+   cd /path/to/workspace
+   git clone https://github.com/TheJagpreet/apex-neural.git
+   ```
+
+2. Run the interactive setup script:
+   ```bash
+   cd apex-neural
+   node scripts/setup.js
+   ```
+
+3. Follow the prompts — the script will:
+   - Copy the `.github/` folder to the workspace root
+   - Copy this README into `.github/` for reference
+   - Optionally install the `apex-neural-memory` VS Code extension
+
+You can also pass the workspace path directly:
+```bash
+node scripts/setup.js --workspace /path/to/workspace
+```
+
 ## Architecture
 
 ```
