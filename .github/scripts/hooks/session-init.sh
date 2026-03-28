@@ -55,7 +55,7 @@ if [ -z "$ADDITIONAL" ]; then
 fi
 
 # Escape special characters for JSON
-ESCAPED=$(printf '%s' "$ADDITIONAL" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g')
+ESCAPED=$(printf '%s' "$ADDITIONAL" | sed "s/\\\\/\\\\\\\\/g; s/\"/\\\\\"/g; s/$(printf '\t')/\\\\t/g")
 
 cat <<EOF
 {"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"$ESCAPED"}}

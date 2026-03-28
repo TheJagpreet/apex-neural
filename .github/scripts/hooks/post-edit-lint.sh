@@ -44,16 +44,14 @@ EXT="${FILE_PATH##*.}"
 case "$EXT" in
     ts|tsx|js|jsx|mjs|cjs)
         if [ -f "$CWD/node_modules/.bin/prettier" ]; then
-            RESULT=$(cd "$CWD" && npx prettier --check "$FILE_PATH" 2>&1)
-            if [ $? -ne 0 ]; then
+            if ! RESULT=$(cd "$CWD" && npx prettier --check "$FILE_PATH" 2>&1); then
                 ADDITIONAL_CONTEXT="Prettier found formatting issues in ${FILE_PATH}: $RESULT"
             fi
         fi
         ;;
     py)
         if command -v ruff >/dev/null 2>&1; then
-            RESULT=$(cd "$CWD" && ruff check "$FILE_PATH" 2>&1)
-            if [ $? -ne 0 ]; then
+            if ! RESULT=$(cd "$CWD" && ruff check "$FILE_PATH" 2>&1); then
                 ADDITIONAL_CONTEXT="Ruff found issues in ${FILE_PATH}: $RESULT"
             fi
         fi
@@ -93,7 +91,7 @@ fi
 
 if [ -n "$ADDITIONAL_CONTEXT" ]; then
     # Escape special characters for JSON
-    ESCAPED_CONTEXT=$(printf '%s' "$ADDITIONAL_CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g')
+    ESCAPED_CONTEXT=$(printf '%s' "$ADDITIONAL_CONTEXT" | sed "s/\\\\/\\\\\\\\/g; s/\"/\\\\\"/g; s/$(printf '\t')/\\\\t/g")
     cat <<EOF
 {"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"$ESCAPED_CONTEXT"}}
 EOF

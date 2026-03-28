@@ -47,8 +47,10 @@ if [ "$HOOK_EVENT" = "SubagentStart" ]; then
     esac
 
     if [ -n "$PHASE_CONTEXT" ]; then
+        # Escape special characters for JSON safety
+        ESCAPED_CONTEXT=$(printf '%s' "$PHASE_CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g')
         cat <<EOF
-{"hookSpecificOutput":{"hookEventName":"SubagentStart","additionalContext":"$PHASE_CONTEXT"}}
+{"hookSpecificOutput":{"hookEventName":"SubagentStart","additionalContext":"$ESCAPED_CONTEXT"}}
 EOF
     else
         echo '{}'
