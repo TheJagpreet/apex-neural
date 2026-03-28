@@ -28,22 +28,22 @@ fi
 case "$AGENT_TYPE" in
     Planner)
         cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the plan using the #apex_memory tool (apex-neural_memory). The plan must include: Objective, Acceptance Criteria, Affected Files, Task Breakdown, Risk Assessment, and Testing Strategy."}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the plan using the #apex_neural_memory tool (apex-neural_memory). The plan must include: Objective, Acceptance Criteria, Affected Files, Task Breakdown, Risk Assessment, and Testing Strategy."}}
 EOF
         ;;
     Architect)
         cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the architecture decision using the #apex_memory tool (apex-neural_memory). The review must include: Verdict (APPROVED/NEEDS_REVISION/BLOCKED), Pattern Analysis, Reuse Opportunities, and Issues Found."}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the architecture decision using the #apex_neural_memory tool (apex-neural_memory). The review must include: Verdict (APPROVED/NEEDS_REVISION/BLOCKED), Pattern Analysis, Reuse Opportunities, and Issues Found."}}
 EOF
         ;;
     Solutioner)
         cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the implementation log using the #apex_memory tool (apex-neural_memory). Check #problems for any errors. Report must include: Tasks Completed, Files Changed, and Deviations from Plan."}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved the implementation log using the #apex_neural_memory tool (apex-neural_memory). Check #problems for any errors. Report must include: Tasks Completed, Files Changed, and Deviations from Plan."}}
 EOF
         ;;
     Tester)
         cat <<'EOF'
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved test results using the #apex_memory tool (apex-neural_memory). Report must include: Test Results table, Acceptance Criteria Coverage, and Verdict (PASS/FAIL/PARTIAL)."}}
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing: Ensure you saved test results using the #apex_neural_memory tool (apex-neural_memory). Report must include: Test Results table, Acceptance Criteria Coverage, and Verdict (PASS/FAIL/PARTIAL)."}}
 EOF
         ;;
     *)

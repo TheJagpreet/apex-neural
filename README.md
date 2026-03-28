@@ -125,7 +125,7 @@ The Orchestrator coordinates a strict four-phase pipeline. Each phase runs in an
           │               🎯 ORCHESTRATOR                   │
           │                                                 │
           │  Coordinates all phases. Never writes code.     │
-          │  Tools: agent, #apex_memory, read, search       │
+          │  Tools: agent, #apex_neural_memory, read, search       │
           │  Hooks: SessionStart, SubagentStart/Stop, Stop  │
           └──┬─────────┬──────────┬──────────┬──────┬──────┘
              │         │          │          │      │
@@ -178,42 +178,42 @@ Apex Neural ships with six specialized agents. All are user-invocable from VS Co
 
 The central coordinator that delegates work to phase-specific subagents. It manages memory handoffs, enforces phase gates, and tracks iteration counts.
 
-- **Tools**: `agent`, `#apex_memory`, `readFile`, `search`, `codebase`, `problems`, `fetch`, `listDirectory`
+- **Tools**: `agent`, `#apex_neural_memory`, `readFile`, `search`, `codebase`, `problems`, `fetch`, `listDirectory`
 - **Hooks**: SessionStart, SubagentStart/Stop, Stop
 
 ### Phase 1: Planner *(read-only)*
 
 Analyzes the task, explores the codebase, and produces a structured implementation plan with tasks, affected files, risks, and acceptance criteria.
 
-- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_memory`, `usages`, `fetch`, `listDirectory`
+- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_neural_memory`, `usages`, `fetch`, `listDirectory`
 - **Output**: `current-plan-<timestamp>.md`
 
 ### Phase 2: Architect *(read-only)*
 
 Validates the plan against codebase patterns, identifies reuse opportunities, flags risks, and issues a verdict: **APPROVED**, **NEEDS_REVISION**, or **BLOCKED**.
 
-- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_memory`, `usages`, `fetch`, `listDirectory`
+- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_neural_memory`, `usages`, `fetch`, `listDirectory`
 - **Output**: `architecture-decision-<timestamp>.md`
 
 ### Phase 3: Solutioner *(full edit)*
 
 Implements code changes following the approved plan and architecture decisions. Matches existing code style, handles errors consistently, and reports any deviations.
 
-- **Tools**: `readFile`, `search`, `edit`, `#apex_memory`, `problems`, `usages`, `runInTerminal`, `getTerminalOutput`, `listDirectory`
+- **Tools**: `readFile`, `search`, `edit`, `#apex_neural_memory`, `problems`, `usages`, `runInTerminal`, `getTerminalOutput`, `listDirectory`
 - **Output**: `implementation-log-<timestamp>.md`
 
 ### Phase 4: Tester *(edit + run)*
 
 Writes and runs tests, validates acceptance criteria, and reports pass/fail/partial verdicts. Discovers existing test conventions automatically.
 
-- **Tools**: `readFile`, `search`, `edit`, `#apex_memory`, `problems`, `runInTerminal`, `getTerminalOutput`, `usages`, `testFailure`, `listDirectory`
+- **Tools**: `readFile`, `search`, `edit`, `#apex_neural_memory`, `problems`, `runInTerminal`, `getTerminalOutput`, `usages`, `testFailure`, `listDirectory`
 - **Output**: `test-results-<timestamp>.md`
 
 ### Maintenance *(on-demand)*
 
 Runs scheduled maintenance tasks: memory pruning, index rebuilding, health checks, conflict detection, and skill enrichment.
 
-- **Tools**: `runInTerminal`, `getTerminalOutput`, `#apex_memory`, `readFile`, `listDirectory`, `problems`
+- **Tools**: `runInTerminal`, `getTerminalOutput`, `#apex_neural_memory`, `readFile`, `listDirectory`, `problems`
 - **Trigger**: On demand or when overdue tasks are detected at session start
 
 ---
@@ -222,19 +222,19 @@ Runs scheduled maintenance tasks: memory pruning, index rebuilding, health check
 
 Apex Neural includes a **persistent, version-controlled memory system** powered by the **apex-neural-memory** VS Code extension. All memories are stored as markdown files in `.github/memory/`, making them inspectable, diffable, and shareable across the team.
 
-### The `#apex_memory` Tool
+### The `#apex_neural_memory` Tool
 
-The extension provides a Language Model Tool called `apex-neural_memory`, referenced in chat as **`#apex_memory`**. It replaces the built-in `vscode/memory` tool to ensure all memories are saved directly to the workspace folder.
+The extension provides a Language Model Tool called `apex-neural_memory`, referenced in chat as **`#apex_neural_memory`**. It replaces the built-in `vscode/memory` tool to ensure all memories are saved directly to the workspace folder.
 
-> **Important:** All agents use `#apex_memory` — not the built-in `vscode/memory`. This ensures memories are workspace-local and version-controlled.
+> **Important:** All agents use `#apex_neural_memory` — not the built-in `vscode/memory`. This ensures memories are workspace-local and version-controlled.
 
 #### Actions
 
 | Action | Description | Example |
 |--------|-------------|---------|
-| **store** | Save a memory with agent name, task, tags, and content | `#apex_memory store a memory about the API design patterns we discovered` |
-| **recall** | Search memories by query (matches tags, tasks, content) | `#apex_memory recall memories about authentication` |
-| **list** | List all memories, optionally filtered by agent | `#apex_memory list all memories for the architect agent` |
+| **store** | Save a memory with agent name, task, tags, and content | `#apex_neural_memory store a memory about the API design patterns we discovered` |
+| **recall** | Search memories by query (matches tags, tasks, content) | `#apex_neural_memory recall memories about authentication` |
+| **list** | List all memories, optionally filtered by agent | `#apex_neural_memory list all memories for the architect agent` |
 
 #### Parameters
 
@@ -298,7 +298,7 @@ Session Start ──→ Load base/project-context.md
 
 - Files use kebab-case naming: `<context-summary>-<YYYYMMDD-HHMMSS>.md`
 - Tags are lowercase, single-word: `api`, `auth`, `database`, `testing`, `security`, `bugfix`, `architecture`
-- Always use `#apex_memory` — never `vscode/memory`
+- Always use `#apex_neural_memory` — never `vscode/memory`
 
 ---
 
@@ -328,7 +328,7 @@ All hooks work on **Windows**, **Linux**, and **macOS**. Each hook has both a Po
 |------|-------|---------|
 | `pre-tool-guard` | **PreToolUse** | Blocks destructive terminal commands and hook self-modification |
 | `post-edit-lint` | **PostToolUse** | Runs linter/formatter after file edits; validates JSON; triggers reactive maintenance |
-| `session-init` | **SessionStart** | Injects project context, git branch, and `#apex_memory` usage hints |
+| `session-init` | **SessionStart** | Injects project context, git branch, and `#apex_neural_memory` usage hints |
 | `subagent-tracker` | **SubagentStart/Stop** | Logs subagent lifecycle events and injects phase-specific context |
 | `phase-gate` | **Stop** | Validates that required phase outputs were saved before allowing completion |
 
