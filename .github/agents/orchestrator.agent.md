@@ -1,7 +1,7 @@
 ---
 name: Orchestrator
 description: "Deterministic coding workflow coordinator: Planning → Architecture → Solutioning → Testing"
-tools: ['agent', 'vscode/memory', 'read/readFile', 'search', 'search/codebase', 'read/problems', 'web/fetch', 'search/listDirectory']
+tools: ['agent', 'apex-neural_memory', 'read/readFile', 'search', 'search/codebase', 'read/problems', 'web/fetch', 'search/listDirectory']
 agents: ['Planner', 'Architect', 'Solutioner', 'Tester', 'Maintenance']
 handoffs:
   - label: "Quick Plan"
@@ -23,19 +23,19 @@ handoffs:
 hooks:
   SessionStart:
     - type: command
-      command: "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/session-init.ps1"
+      command: "node ./.github/scripts/hooks/run-hook.js session-init"
       timeout: 10
   SubagentStart:
     - type: command
-      command: "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/subagent-tracker.ps1"
+      command: "node ./.github/scripts/hooks/run-hook.js subagent-tracker"
       timeout: 5
   SubagentStop:
     - type: command
-      command: "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/subagent-tracker.ps1"
+      command: "node ./.github/scripts/hooks/run-hook.js subagent-tracker"
       timeout: 5
   Stop:
     - type: command
-      command: "powershell -ExecutionPolicy Bypass -File ./.github/scripts/hooks/phase-gate.ps1"
+      command: "node ./.github/scripts/hooks/run-hook.js phase-gate"
       timeout: 10
 ---
 

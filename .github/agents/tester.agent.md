@@ -2,7 +2,7 @@
 name: Tester
 description: "Writes tests, runs test suites, and validates implementations against acceptance criteria"
 user-invocable: true
-tools: ['read/readFile', 'search', 'edit', 'vscode/memory', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/usages', 'execute/testFailure', 'search/listDirectory']
+tools: ['read/readFile', 'search', 'edit', 'apex-neural_memory', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/usages', 'execute/testFailure', 'search/listDirectory']
 ---
 
 # Tester Agent — Test Creation & Validation

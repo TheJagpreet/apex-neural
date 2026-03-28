@@ -2,7 +2,7 @@
 name: Maintenance
 description: "Runs scheduled maintenance tasks: memory pruning, index rebuilding, health checks, skill enrichment, and custom scheduled jobs"
 user-invocable: true
-tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'vscode/memory', 'read/readFile', 'search/listDirectory', 'read/problems']
+tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'apex-neural_memory', 'read/readFile', 'search/listDirectory', 'read/problems']
 ---
 
 # Maintenance Agent — Scheduled Task Runner
@@ -40,7 +40,7 @@ Read `.github/schedule.json` for the full list of registered tasks and their int
 ### Step 2: Execute Overdue Tasks
 
 For each overdue task:
-1. Run the task command via terminal: `powershell -ExecutionPolicy Bypass -File <command> <cwd>`
+1. Run the task command via terminal using the cross-platform runner: `node ./.github/scripts/hooks/run-hook.js <hook-name>`
 2. Capture the output
 3. Update `.github/memory/schedule-state.json` with the new `last_run_epoch` and `last_run_iso`
 

@@ -1,210 +1,432 @@
-# Apex Neural — Agent Ecosystem
+<div align="center">
 
-A deterministic, multi-phase coding agent workflow built on VS Code's Copilot agent infrastructure. Prevents context loss, hallucination, and scope drift by enforcing structured phases with memory handoffs, hooks for enforcement, and context-isolated subagents.
+# 🧠 Apex Neural
 
-## Architecture
+### Deterministic Multi-Agent Coding Workflow for VS Code
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        USER REQUEST                             │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     🎯 ORCHESTRATOR                              │
-│  Coordinates all phases. Never writes code directly.            │
-│  Tools: agent, memory, read, search, codebase                   │
-│  Hooks: SessionStart, SubagentStart/Stop, Stop                  │
-└──┬──────────┬───────────┬───────────┬──────────┬────────────────┘
-   │          │           │           │          │
- Phase 1   Phase 2    Phase 3    Phase 4    On Demand
-   │          │           │           │          │
-   ▼          ▼           ▼           ▼          ▼
-┌────────┐┌────────┐┌─────────┐┌────────┐┌─────────────┐
-│PLANNER ││ARCHITEC││SOLUTION ││ TESTER ││ MAINTENANCE │
-│        ││T       ││ER       ││        ││             │
-│Readonly││Readonly││Full edit││Edit+Run││ Run+Report  │
-│Analyze ││Validate││Implement││ Verify ││ Prune/Index │
-│Plan    ││Design  ││Build    ││ Test   ││ Health/Skill│
-└───┬────┘└───┬────┘└────┬────┘└───┬────┘└──────┬──────┘
-    │         │          │         │             │
-    ▼         ▼          ▼         ▼             ▼
-  ┌──────────────────────────────────────────────────┐
-  │          SESSION MEMORY (handoff state)           │
-  │  current-plan.md → architecture-decision.md →     │
-  │  implementation-log.md → test-results.md          │
-  │              schedule-state.json                   │
-  └──────────────────────────────────────────────────┘
-```
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.100%2B-blue?logo=visualstudiocode)](https://code.visualstudio.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](./extensions/apex-neural-memory/LICENSE)
+[![Copilot](https://img.shields.io/badge/GitHub%20Copilot-Agent%20Mode-8957e5?logo=githubcopilot&logoColor=white)](https://github.com/features/copilot)
 
-## How It Works
+**Apex Neural** is a structured, multi-phase AI coding workflow built on VS Code's Copilot Chat agent infrastructure.
+It prevents context loss, hallucination, and scope drift by enforcing deterministic phases with memory handoffs, lifecycle hooks, and context-isolated subagents.
 
-### Phase 1: Planning (Planner subagent)
-- **Tools**: read-only (`read`, `search`, `codebase`, `problems`)
-- **Input**: User's task description
-- **Output**: Structured plan with tasks, affected files, risks, acceptance criteria
-- **Memory**: Saves plan to `.github/memory/planner/current-plan-<timestamp>.md`
+[Quick Start](#-quick-start) · [Architecture](#-architecture) · [Agents](#-agents) · [Memory System](#-memory-system) · [Hooks](#-cross-platform-hooks) · [Customization](#-customization)
 
-### Phase 2: Architecture (Architect subagent)
-- **Tools**: read-only (`read`, `search`, `codebase`, `usages`)
-- **Input**: Plan from Phase 1
-- **Output**: Architecture review with verdict (APPROVED / NEEDS_REVISION / BLOCKED)
-- **Memory**: Saves decision to `.github/memory/architect/architecture-decision-<timestamp>.md`
-- **Loop**: If NEEDS_REVISION → back to Planner (max 3 iterations)
+</div>
 
-### Phase 3: Solutioning (Solutioner subagent)
-- **Tools**: full edit (`edit`, `create_file`, `replace_string_in_file`, `run_in_terminal`)
-- **Input**: Approved plan + architecture decisions
-- **Output**: Implemented code changes + implementation report
-- **Memory**: Saves log to `.github/memory/solutioner/implementation-log-<timestamp>.md`
-- **Hook**: Post-edit linting runs automatically after every file change
+---
 
-### Phase 4: Testing (Tester subagent)
-- **Tools**: edit + run (`edit`, `create_file`, `run_in_terminal`, `problems`)
-- **Input**: Implementation log + changed files
-- **Output**: Test report with pass/fail, coverage, verdict
-- **Memory**: Saves results to `.github/memory/tester/test-results-<timestamp>.md`
-- **Loop**: If FAIL → back to Solutioner (max 5 iterations per test)
+## 📋 Table of Contents
 
-## Determinism Mechanisms
+- [Why Apex Neural?](#-why-apex-neural)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [Architecture](#-architecture)
+- [Agents](#-agents)
+- [Memory System](#-memory-system)
+- [Cross-Platform Hooks](#-cross-platform-hooks)
+- [Skills](#-skills)
+- [Determinism Mechanisms](#-determinism-mechanisms)
+- [Scheduled Maintenance](#-scheduled-maintenance)
+- [Customization](#-customization)
+- [VS Code Settings](#-vs-code-settings)
+- [Repository Structure](#-repository-structure)
 
-| Mechanism | Purpose | How |
-|-----------|---------|-----|
-| **Subagent context isolation** | Prevents context overflow | Each subagent gets only the previous phase's output |
-| **Session memory handoffs** | Structured state between phases | Plans, decisions, logs saved as markdown artifacts |
-| **Agent-scoped hooks** | Enforce phase gates | Stop hooks verify required outputs before allowing phase completion |
-| **Tool restrictions** | Prevent unintended actions | Planner/Architect are read-only; Solutioner can edit; Tester can edit+run |
-| **Pre-tool safety guard** | Block dangerous operations | Hook blocks destructive terminal commands and hook self-modification |
-| **Post-edit linting** | Catch errors early | Lint/format hooks run after every file edit |
-| **Reactive maintenance** | Keep indexes fresh | Memory index auto-rebuilds after memory file writes |
-| **Time-gated scheduling** | Prevent redundant work | Maintenance tasks only run when overdue based on configurable intervals |
-| **Subagent tracking** | Audit trail | All subagent start/stop events logged with timestamps |
-| **Iteration limits** | Prevent infinite loops | Max 3 plan-architect iterations, max 5 solution-test iterations |
-| **Phase-specific prompts** | Role enforcement | SubagentStart hook injects phase-specific role reminders |
+---
 
-## File Structure
+## 💡 Why Apex Neural?
+
+Large language models in coding assistants suffer from three core problems:
+
+| Problem | How Apex Neural Solves It |
+|---------|--------------------------|
+| **Context loss** | Each phase produces structured artifacts that are handed off explicitly — no information is lost between steps |
+| **Hallucination** | Read-only agents (Planner, Architect) can't modify code; implementation follows an approved plan |
+| **Scope drift** | Phase gates enforce that each agent completes its role before the workflow advances |
+
+Apex Neural wraps VS Code's Copilot Chat in a deterministic pipeline — **Planning → Architecture → Implementation → Testing** — where each phase runs in an isolated subagent with restricted tools, enforced outputs, and persistent memory.
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Version | Purpose |
+|------------|---------|---------|
+| **VS Code** | 1.100+ | Host environment with GitHub Copilot Chat |
+| **GitHub Copilot** | Chat enabled | Provides the agent and tool infrastructure |
+| **Node.js** | 18+ | Setup script and cross-platform hook runner |
+
+---
+
+## 🚀 Quick Start
+
+Apex Neural is designed to sit alongside your project repos in a shared VS Code workspace:
 
 ```
-.github/
-├── agents/
-│   ├── orchestrator.agent.md    # Main coordinator
-│   ├── planner.agent.md         # Planning agent (user-invocable)
-│   ├── architect.agent.md       # Architecture agent (user-invocable)
-│   ├── solutioner.agent.md      # Implementation agent (user-invocable)
-│   ├── tester.agent.md          # Testing agent (user-invocable)
-│   └── maintenance.agent.md     # Maintenance agent (user-invocable)
-├── hooks/
-│   └── safety-and-tracking.json # Workspace-level hooks
-├── memory/
-│   ├── README.md                # Memory system conventions & templates
-│   ├── schedule-state.json      # Last-run timestamps for scheduled tasks
-│   ├── base/
-│   │   └── project-context.md   # Core project context (loaded on session start)
-│   ├── orchestrator/            # Orchestrator conversation memories
-│   ├── planner/                 # Planner conversation memories
-│   ├── architect/               # Architect conversation memories
-│   ├── solutioner/              # Solutioner conversation memories
-│   └── tester/                  # Tester conversation memories
-├── schedule.json                # Task schedule definitions and intervals
-├── scripts/
-│   └── hooks/
-│       ├── session-init.ps1      # Injects project context + time-gated scheduling
-│       ├── post-edit-lint.ps1    # Runs linter + reactive maintenance triggers
-│       ├── pre-tool-guard.ps1    # Blocks dangerous operations
-│       ├── subagent-tracker.ps1  # Logs subagent lifecycle events
-│       └── phase-gate.ps1        # Validates phase outputs before completion
-├── skills/
-│   ├── codebase-analysis/
-│   │   └── SKILL.md             # Codebase analysis patterns
-│   ├── implementation-patterns/
-│   │   └── SKILL.md             # Implementation best practices
-│   └── test-strategy/
-│       └── SKILL.md             # Testing strategy & patterns
-├── copilot-instructions.md      # Global project instructions
-└── tool-sets.json               # Grouped tool collections
+workspace/
+├── .github/              ← Apex Neural agents, hooks, skills (installed by setup)
+├── apex-neural/          ← this repo
+├── your-project-1/
+├── your-project-2/
+└── ...
 ```
 
-## Usage
+### 1. Clone the Repository
 
-### Starting the Orchestrator
-1. Open VS Code Chat
-2. Select **Orchestrator** from the agents dropdown
-3. Describe your task
+```bash
+cd /path/to/workspace
+git clone https://github.com/TheJagpreet/apex-neural.git
+```
 
-Example:
+### 2. Run Setup
+
+```bash
+cd apex-neural
+node scripts/setup.js
+```
+
+Or pass the workspace path directly:
+
+```bash
+node scripts/setup.js --workspace /path/to/workspace
+```
+
+The setup script will:
+- Copy the `.github/` folder (agents, hooks, skills, memory) to the workspace root
+- Copy this README into `.github/` for reference
+- Optionally install the **apex-neural-memory** VS Code extension
+
+### 3. Start Using It
+
+1. Open the workspace folder in VS Code
+2. Open VS Code Chat (`Ctrl+Shift+I` / `Cmd+Shift+I`)
+3. Select **Orchestrator** from the agents dropdown
+4. Describe your task — the Orchestrator handles the rest
+
 ```
 Add a REST endpoint for user profile updates with input validation and error handling
 ```
 
-The Orchestrator will automatically:
-1. Invoke the Planner to create a structured plan
-2. Invoke the Architect to validate the plan
-3. Invoke the Solutioner to implement the changes
-4. Invoke the Tester to verify everything works
+---
 
-### Using Individual Agents
-All agents are user-invocable — you can select them directly from the VS Code Chat agent dropdown or use the Orchestrator's handoff buttons:
-- **Quick Plan**: Jump directly to the Planner
-- **Direct to Architect**: Skip planning if you already have a design question
-- **Direct to Testing**: Jump to testing for existing code
-- **Run Maintenance**: Check for overdue tasks and run them
+## 🏗 Architecture
 
-For full workflow enforcement (phase gates, hooks, iteration limits), always prefer the **Orchestrator**.
+The Orchestrator coordinates a strict four-phase pipeline. Each phase runs in an isolated subagent with only the tools it needs. Structured artifacts flow between phases through the memory system.
 
-### VS Code Settings
+```
+                          ┌──────────────────┐
+                          │   USER REQUEST   │
+                          └────────┬─────────┘
+                                   │
+                                   ▼
+          ┌────────────────────────────────────────────────┐
+          │               🎯 ORCHESTRATOR                   │
+          │                                                 │
+          │  Coordinates all phases. Never writes code.     │
+          │  Tools: agent, #apex_neural_memory, read, search       │
+          │  Hooks: SessionStart, SubagentStart/Stop, Stop  │
+          └──┬─────────┬──────────┬──────────┬──────┬──────┘
+             │         │          │          │      │
+          Phase 1   Phase 2   Phase 3   Phase 4  On Demand
+             │         │          │          │      │
+             ▼         ▼          ▼          ▼      ▼
+          ┌──────┐ ┌────────┐ ┌────────┐ ┌──────┐ ┌───────────┐
+          │PLAN- │ │ARCHI-  │ │SOLUT-  │ │TEST- │ │MAINTEN-   │
+          │NER   │ │TECT    │ │IONER   │ │ER    │ │ANCE       │
+          │      │ │        │ │        │ │      │ │           │
+          │Read  │ │Read    │ │Full    │ │Edit  │ │Run        │
+          │Only  │ │Only    │ │Edit    │ │+ Run │ │+ Report   │
+          └──┬───┘ └──┬─────┘ └──┬─────┘ └──┬───┘ └─────┬─────┘
+             │        │          │          │           │
+             ▼        ▼          ▼          ▼           ▼
+          ┌──────────────────────────────────────────────────┐
+          │          📁 SESSION MEMORY (.github/memory/)      │
+          │                                                   │
+          │  current-plan.md ──→ architecture-decision.md     │
+          │                 ──→ implementation-log.md          │
+          │                 ──→ test-results.md                │
+          └──────────────────────────────────────────────────┘
+```
 
-Enable these settings for best experience:
+### Iteration Loops
+
+The workflow includes built-in feedback loops with safeguards:
+
+```
+  ┌───────────┐      max 3       ┌───────────┐
+  │  PLANNER  │◄─── iterations ──│ ARCHITECT  │
+  │           │───── plan ──────►│           │
+  └───────────┘                  └───────────┘
+       If NEEDS_REVISION ──► back to Planner
+
+  ┌───────────┐      max 5       ┌───────────┐
+  │SOLUTIONER │◄─── iterations ──│  TESTER    │
+  │           │───── code ──────►│           │
+  └───────────┘                  └───────────┘
+       If tests FAIL ──► back to Solutioner
+```
+
+---
+
+## 🤖 Agents
+
+Apex Neural ships with six specialized agents. All are user-invocable from VS Code Chat, but the **Orchestrator** is the recommended entry point for full workflow enforcement.
+
+### Orchestrator *(coordinator — never writes code)*
+
+The central coordinator that delegates work to phase-specific subagents. It manages memory handoffs, enforces phase gates, and tracks iteration counts.
+
+- **Tools**: `agent`, `#apex_neural_memory`, `readFile`, `search`, `codebase`, `problems`, `fetch`, `listDirectory`
+- **Hooks**: SessionStart, SubagentStart/Stop, Stop
+
+### Phase 1: Planner *(read-only)*
+
+Analyzes the task, explores the codebase, and produces a structured implementation plan with tasks, affected files, risks, and acceptance criteria.
+
+- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_neural_memory`, `usages`, `fetch`, `listDirectory`
+- **Output**: `current-plan-<timestamp>.md`
+
+### Phase 2: Architect *(read-only)*
+
+Validates the plan against codebase patterns, identifies reuse opportunities, flags risks, and issues a verdict: **APPROVED**, **NEEDS_REVISION**, or **BLOCKED**.
+
+- **Tools**: `readFile`, `search`, `codebase`, `problems`, `#apex_neural_memory`, `usages`, `fetch`, `listDirectory`
+- **Output**: `architecture-decision-<timestamp>.md`
+
+### Phase 3: Solutioner *(full edit)*
+
+Implements code changes following the approved plan and architecture decisions. Matches existing code style, handles errors consistently, and reports any deviations.
+
+- **Tools**: `readFile`, `search`, `edit`, `#apex_neural_memory`, `problems`, `usages`, `runInTerminal`, `getTerminalOutput`, `listDirectory`
+- **Output**: `implementation-log-<timestamp>.md`
+
+### Phase 4: Tester *(edit + run)*
+
+Writes and runs tests, validates acceptance criteria, and reports pass/fail/partial verdicts. Discovers existing test conventions automatically.
+
+- **Tools**: `readFile`, `search`, `edit`, `#apex_neural_memory`, `problems`, `runInTerminal`, `getTerminalOutput`, `usages`, `testFailure`, `listDirectory`
+- **Output**: `test-results-<timestamp>.md`
+
+### Maintenance *(on-demand)*
+
+Runs scheduled maintenance tasks: memory pruning, index rebuilding, health checks, conflict detection, and skill enrichment.
+
+- **Tools**: `runInTerminal`, `getTerminalOutput`, `#apex_neural_memory`, `readFile`, `listDirectory`, `problems`
+- **Trigger**: On demand or when overdue tasks are detected at session start
+
+---
+
+## 🧠 Memory System
+
+Apex Neural includes a **persistent, version-controlled memory system** powered by the **apex-neural-memory** VS Code extension. All memories are stored as markdown files in `.github/memory/`, making them inspectable, diffable, and shareable across the team.
+
+### The `#apex_neural_memory` Tool
+
+The extension provides a Language Model Tool called `apex-neural_memory`, referenced in chat as **`#apex_neural_memory`**. It replaces the built-in `vscode/memory` tool to ensure all memories are saved directly to the workspace folder.
+
+> **Important:** All agents use `#apex_neural_memory` — not the built-in `vscode/memory`. This ensures memories are workspace-local and version-controlled.
+
+#### Actions
+
+| Action | Description | Example |
+|--------|-------------|---------|
+| **store** | Save a memory with agent name, task, tags, and content | `#apex_neural_memory store a memory about the API design patterns we discovered` |
+| **recall** | Search memories by query (matches tags, tasks, content) | `#apex_neural_memory recall memories about authentication` |
+| **list** | List all memories, optionally filtered by agent | `#apex_neural_memory list all memories for the architect agent` |
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `action` | `store` / `recall` / `list` | ✅ | The operation to perform |
+| `agent` | string | — | Agent scope (e.g., `planner`, `architect`). Defaults to `shared` |
+| `task` | string | — | Brief task description (used in filename and frontmatter) |
+| `tags` | string[] | — | Categorization tags (e.g., `["api", "validation"]`) |
+| `content` | string | — | Markdown content of the memory |
+| `outcome` | string | — | Task outcome: `completed`, `approved`, `rejected`, `failed`, `partial`, `blocked` |
+| `query` | string | — | Search query for `recall` action |
+
+### Memory File Format
+
+Every memory file includes YAML frontmatter for structured indexing:
+
+```yaml
+---
+agent: architect
+date: "2026-03-25T10:00:00Z"
+task: "Documented API design patterns"
+tags: [api, architecture, patterns]
+outcome: approved
+---
+
+# API Design Patterns
+
+Content of the memory goes here...
+```
+
+### Memory Directory Structure
+
+```
+.github/memory/
+├── base/                # Foundational project context
+│   └── project-context.md
+├── orchestrator/        # Orchestrator conversation memories
+├── planner/             # Planner conversation memories
+├── architect/           # Architect conversation memories
+├── solutioner/          # Solutioner conversation memories
+├── tester/              # Tester conversation memories
+└── shared/              # Cross-agent shared memories
+```
+
+### Memory Lifecycle
+
+```
+Session Start ──→ Load base/project-context.md
+       │
+       ├──→ Check agent memory folder for related past work
+       │
+       ├──→ Execute task
+       │
+       ├──→ Save memory file with structured frontmatter
+       │
+       └──→ Promote discoveries to shared/ if project-wide
+```
+
+### Conventions
+
+- Files use kebab-case naming: `<context-summary>-<YYYYMMDD-HHMMSS>.md`
+- Tags are lowercase, single-word: `api`, `auth`, `database`, `testing`, `security`, `bugfix`, `architecture`
+- Always use `#apex_neural_memory` — never `vscode/memory`
+
+---
+
+## 🪝 Cross-Platform Hooks
+
+All hooks work on **Windows**, **Linux**, and **macOS**. Each hook has both a PowerShell (`.ps1`) and bash (`.sh`) implementation, with a Node.js dispatcher that selects the right one at runtime.
+
+### Hook Dispatch Flow
+
+```
+                      ┌──────────────────────┐
+                      │  run-hook.js <name>   │
+                      └──────────┬───────────┘
+                                 │
+                 ┌───────────────┼───────────────┐
+                 │               │               │
+            Windows          Linux           macOS
+                 │               │               │
+                 ▼               ▼               ▼
+         <name>.ps1        <name>.sh        <name>.sh
+         (PowerShell)      (bash/sh)        (bash/sh)
+```
+
+### Registered Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| `pre-tool-guard` | **PreToolUse** | Blocks destructive terminal commands and hook self-modification |
+| `post-edit-lint` | **PostToolUse** | Runs linter/formatter after file edits; validates JSON; triggers reactive maintenance |
+| `session-init` | **SessionStart** | Injects project context, git branch, and `#apex_neural_memory` usage hints |
+| `subagent-tracker` | **SubagentStart/Stop** | Logs subagent lifecycle events and injects phase-specific context |
+| `phase-gate` | **Stop** | Validates that required phase outputs were saved before allowing completion |
+
+### Hook Registration
+
+Hooks are registered in two places:
+
+1. **Workspace-level** (`.github/hooks/safety-and-tracking.json`) — applies to all agents
+2. **Agent-level** (in the agent's YAML frontmatter `hooks` field) — applies to a specific agent
+
+Both use the cross-platform runner:
 
 ```json
 {
-  "github.copilot.chat.tools.memory.enabled": true,
-  "chat.useCustomAgentHooks": true,
-  "chat.agent.thinking.collapsedTools": false
+  "type": "command",
+  "command": "node ./.github/scripts/hooks/run-hook.js <hook-name>",
+  "timeout": 10
 }
 ```
 
-## Customization
+---
 
-### Adding a New Subagent
-1. Create a new `.agent.md` file in `.github/agents/`
-2. Set `user-invocable: false` if the agent should only be called via `runSubagent`, or `user-invocable: true` to allow direct selection from the agent dropdown
-3. Add the agent name to the Orchestrator's `agents` list
-4. Add a phase in the Orchestrator's instructions
+## 📚 Skills
 
-### Adding a New Skill
-1. Create a directory in `.github/skills/`
-2. Add a `SKILL.md` with YAML frontmatter (`name`, `description`)
+Skills are auto-loading knowledge modules that provide domain-specific guidance when relevant to the conversation. They live in `.github/skills/`.
+
+| Skill | Description |
+|-------|-------------|
+| **codebase-analysis** | Systematic approach to analyzing project structure, patterns, conventions, and dependencies |
+| **implementation-patterns** | Best practices for error handling, input validation, security, and clean code |
+| **test-strategy** | Testing strategies following the test pyramid: unit → integration → end-to-end |
+
+### Adding a Skill
+
+1. Create a directory in `.github/skills/<skill-name>/`
+2. Add a `SKILL.md` with YAML frontmatter:
+   ```yaml
+   ---
+   name: my-skill
+   description: "What this skill provides"
+   ---
+   ```
 3. The skill auto-loads when relevant to the conversation
 
-### Adding a New Hook
-1. Add a script to `.github/scripts/hooks/`
-2. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
+---
 
-## Scheduled Maintenance
+## 🔒 Determinism Mechanisms
 
-The project includes a time-gated maintenance system that keeps the memory system, indexes, and skills healthy without requiring manual intervention.
+Apex Neural enforces deterministic behavior through multiple layers:
 
-### How It Works
+| Mechanism | Purpose |
+|-----------|---------|
+| **Subagent context isolation** | Each subagent receives only the previous phase's output — prevents context overflow |
+| **Session memory handoffs** | Plans, decisions, and logs are saved as structured markdown artifacts |
+| **Phase gates** | Stop hooks verify required outputs before allowing phase completion |
+| **Tool restrictions** | Planner/Architect are read-only; Solutioner can edit; Tester can edit + run |
+| **Pre-tool safety guard** | Blocks destructive terminal commands and hook self-modification |
+| **Post-edit linting** | Lint/format hooks run automatically after every file edit |
+| **Reactive maintenance** | Memory index auto-rebuilds after memory file writes |
+| **Time-gated scheduling** | Maintenance tasks only run when overdue based on configurable intervals |
+| **Subagent tracking** | All subagent start/stop events are logged with timestamps |
+| **Iteration limits** | Max 3 plan ↔ architect iterations, max 5 solution ↔ test iterations |
+| **Phase-specific prompts** | SubagentStart hook injects role reminders at each phase transition |
 
-Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init.ps1` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
+---
 
-| Task | Interval | What It Does |
-|------|---------|---------------|
+## 🔧 Scheduled Maintenance
+
+The maintenance system keeps memory indexes, skills, and health reports fresh without manual intervention.
+
+### Trigger Mechanisms
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                  MAINTENANCE TRIGGERS                     │
+├──────────────────┬──────────────────┬────────────────────┤
+│   ⏰ Time-Gated  │  ⚡ Reactive      │  🎯 On-Demand     │
+│                  │                  │                    │
+│  SessionStart    │  PostToolUse     │  Maintenance       │
+│  checks overdue  │  auto-rebuilds   │  agent invoked     │
+│  tasks and runs  │  memory index    │  directly by user  │
+│  them            │  on file writes  │  or orchestrator   │
+└──────────────────┴──────────────────┴────────────────────┘
+```
+
+### Configurable Tasks
+
+Tasks are defined in `.github/schedule.json` with configurable intervals. Execution timestamps are tracked in `.github/memory/schedule-state.json`.
+
+| Task | Default Interval | What It Does |
+|------|-----------------|--------------|
 | `prune-memory` | 24h | Archives old memories, compacts unenriched auto-captures |
 | `rebuild-index` | 1h | Rebuilds the searchable memory index |
 | `memory-health` | 4h | Generates health metrics report |
 | `detect-conflicts` | 4h | Scans for unresolved memory conflicts |
-| `memory-to-skill` | 168h | Distills recurring patterns into skill updates |
-
-### Three Trigger Mechanisms
-
-1. **Time-gated (SessionStart)** — Tasks run automatically when overdue at the start of each chat session
-2. **Reactive (PostToolUse)** — Memory index auto-rebuilds whenever a memory file is created or edited
-3. **On-demand (Maintenance agent)** — Invoke the Maintenance agent directly for targeted or full maintenance runs
+| `memory-to-skill` | 168h (weekly) | Distills recurring patterns into skill updates |
 
 ### Customizing the Schedule
-
-Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
 
 ```json
 {
@@ -212,7 +434,7 @@ Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
     {
       "name": "my-task",
       "description": "What this task does",
-      "command": ".github/scripts/my-script.ps1",
+      "command": "node ./.github/scripts/hooks/run-hook.js my-script",
       "interval": "12h",
       "enabled": true
     }
@@ -222,28 +444,116 @@ Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
 
 Supported interval units: `h` (hours), `d` (days), `m` (minutes).
 
-## Memory System
+---
 
-The project includes a persistent, version-controlled memory system in `.github/memory/` that accumulates knowledge across agent conversations.
+## 🎨 Customization
 
-### How It Works
+### Adding a New Agent
 
-- **Base memory** (`.github/memory/base/project-context.md`) — Canonical project context loaded on every session start. Describes what the repo is, its architecture, agents, hooks, and conventions.
-- **Agent memory** (`.github/memory/<agent>/`) — Per-agent folders where conversation memories are stored over time. Each agent builds specialized knowledge from past tasks.
+1. Create a `.agent.md` file in `.github/agents/`
+2. Set `user-invocable: true` for direct access from the Chat dropdown, or `false` for subagent-only
+3. Add the agent name to the Orchestrator's `agents` list in its frontmatter
+4. Define the agent's phase in the Orchestrator's instructions
 
-### Memory File Convention
+### Adding a New Hook
 
-Files are named `<context-summary>-<YYYYMMDD-HHMMSS>.md`:
+1. Create both a `.ps1` (Windows) and `.sh` (Linux/Mac) script in `.github/scripts/hooks/`
+2. Register it in `.github/hooks/safety-and-tracking.json`:
+   ```json
+   {
+     "type": "command",
+     "command": "node ./.github/scripts/hooks/run-hook.js <hook-name>",
+     "timeout": 10
+   }
+   ```
+3. Or register it in an agent's `hooks` frontmatter for agent-scoped hooks
+
+### Tool Sets
+
+Tool sets group related tools for easy assignment to agents. Defined in `.github/tool-sets.json`:
+
+| Tool Set | Tools | Description |
+|----------|-------|-------------|
+| **reader** | `codebase`, `search`, `readFile`, `problems`, `usages`, `listDirectory`, `fileSearch` | Read-only code exploration |
+| **writer** | `editFiles`, `createFile`, `createDirectory` | File creation and modification |
+| **runner** | `runInTerminal`, `getTerminalOutput`, `problems` | Command execution and diagnostics |
+| **workflow** | `runSubagent`, `apex-neural_memory` | Agent orchestration and memory management |
+
+---
+
+## ⚙ VS Code Settings
+
+Enable these settings for the best experience:
+
+```json
+{
+  "chat.useCustomAgentHooks": true,
+  "chat.agent.thinking.collapsedTools": false
+}
 ```
-.github/memory/orchestrator/added-rest-validation-20260321-183000.md
-.github/memory/planner/refactored-auth-module-20260322-100000.md
+
+Ensure the **apex-neural-memory** extension is installed (the setup script offers to install it automatically).
+
+---
+
+## 📁 Repository Structure
+
+```
+apex-neural/
+├── .github/
+│   ├── agents/                          # Agent definitions
+│   │   ├── orchestrator.agent.md          # Main coordinator
+│   │   ├── planner.agent.md               # Planning agent
+│   │   ├── architect.agent.md             # Architecture agent
+│   │   ├── solutioner.agent.md            # Implementation agent
+│   │   ├── tester.agent.md                # Testing agent
+│   │   └── maintenance.agent.md           # Maintenance agent
+│   ├── hooks/
+│   │   └── safety-and-tracking.json       # Workspace-level hook registration
+│   ├── memory/                            # Version-controlled memory store
+│   │   ├── base/
+│   │   │   └── project-context.md           # Core project context
+│   │   ├── orchestrator/                    # Orchestrator memories
+│   │   ├── planner/                         # Planner memories
+│   │   ├── architect/                       # Architect memories
+│   │   ├── solutioner/                      # Solutioner memories
+│   │   ├── tester/                          # Tester memories
+│   │   ├── shared/                          # Cross-agent memories
+│   │   └── schedule-state.json              # Maintenance timestamps
+│   ├── scripts/
+│   │   └── hooks/                           # Cross-platform hook scripts
+│   │       ├── run-hook.js                    # OS dispatcher (Node.js)
+│   │       ├── session-init.{sh,ps1}          # Session initialization
+│   │       ├── pre-tool-guard.{sh,ps1}        # Safety guard
+│   │       ├── post-edit-lint.{sh,ps1}        # Linting + reactive maintenance
+│   │       ├── subagent-tracker.{sh,ps1}      # Lifecycle logging
+│   │       └── phase-gate.{sh,ps1}            # Phase validation
+│   ├── skills/                              # Auto-loading knowledge modules
+│   │   ├── codebase-analysis/SKILL.md
+│   │   ├── implementation-patterns/SKILL.md
+│   │   └── test-strategy/SKILL.md
+│   ├── copilot-instructions.md              # Global project instructions
+│   ├── schedule.json                        # Maintenance task definitions
+│   └── tool-sets.json                       # Grouped tool collections
+├── extensions/
+│   └── apex-neural-memory/                  # VS Code extension
+│       ├── src/
+│       │   ├── extension.ts                   # Extension entry point
+│       │   ├── memoryTool.ts                  # Memory tool implementation
+│       │   └── test/memoryTool.test.ts        # Unit tests
+│       ├── package.json                       # Extension manifest
+│       └── README.md                          # Extension documentation
+├── scripts/
+│   └── setup.js                             # Interactive workspace setup
+└── README.md                                # ← You are here
 ```
 
-### Agent Workflow with Memory
+---
 
-1. **Session start** → Load `base/project-context.md` for foundational context
-2. **Before a task** → Check the relevant agent memory folder for related past work
-3. **After a task** → Create a new memory file capturing decisions and outcomes
-4. **On pattern discovery** → Update `base/project-context.md` if it affects project conventions
+<div align="center">
 
-See `.github/memory/README.md` for the full template and conventions.
+**Built for deterministic AI-assisted development.**
+
+[Report an Issue](https://github.com/TheJagpreet/apex-neural/issues) · [Contribute](https://github.com/TheJagpreet/apex-neural/pulls)
+
+</div>
