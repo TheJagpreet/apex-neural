@@ -224,7 +224,7 @@ Apex Neural includes a **persistent, version-controlled memory system** powered 
 
 ### The `#apex_neural_memory` Tool
 
-The extension provides a Language Model Tool called `apex-neural_memory`, referenced in chat as **`#apex_neural_memory`**. It replaces the built-in `vscode/memory` tool to ensure all memories are saved directly to the workspace folder.
+The extension provides a Language Model Tool called `apex_neural_memory`, referenced in chat as **`#apex_neural_memory`**. It replaces the built-in `vscode/memory` tool to ensure all memories are saved directly to the workspace folder.
 
 > **Important:** All agents use `#apex_neural_memory` — not the built-in `vscode/memory`. This ensures memories are workspace-local and version-controlled.
 
@@ -477,7 +477,7 @@ Tool sets group related tools for easy assignment to agents. Defined in `.github
 | **reader** | `codebase`, `search`, `readFile`, `problems`, `usages`, `listDirectory`, `fileSearch` | Read-only code exploration |
 | **writer** | `editFiles`, `createFile`, `createDirectory` | File creation and modification |
 | **runner** | `runInTerminal`, `getTerminalOutput`, `problems` | Command execution and diagnostics |
-| **workflow** | `runSubagent`, `apex-neural_memory` | Agent orchestration and memory management |
+| **workflow** | `runSubagent`, `apex_neural_memory` | Agent orchestration and memory management |
 
 ---
 

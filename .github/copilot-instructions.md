@@ -16,11 +16,11 @@ Do NOT skip phases. Every feature or bug fix flows through all four phases.
 
 ## Memory Usage
 
-Memory is managed by the **apex-neural-memory** VS Code extension, which provides the `apex-neural_memory` tool. This tool saves memories directly to the workspace folder at `.github/memory/`, ensuring they are version-controlled and accessible across sessions.
+Memory is managed by the **apex-neural-memory** VS Code extension, which provides the `apex_neural_memory` tool. This tool saves memories directly to the workspace folder at `.github/memory/`, ensuring they are version-controlled and accessible across sessions.
 
 ### Using the Memory Tool
 
-Agents should use the `apex-neural_memory` tool (referenced as `#apex_neural_memory` in chat) with the following actions:
+Agents should use the `apex_neural_memory` tool (referenced as `#apex_neural_memory` in chat) with the following actions:
 
 - **store**: Save a memory with agent name, task, tags, and content
 - **recall**: Search memories by query (matches against tags, task descriptions, and content)
@@ -54,7 +54,7 @@ outcome: completed
 
 ### Conventions
 
-- Use the `apex-neural_memory` tool (referenced as `#apex_neural_memory` in chat) for all memory operations — do not use the built-in `vscode/memory`
+- Use the `apex_neural_memory` tool (referenced as `#apex_neural_memory` in chat) for all memory operations — do not use the built-in `vscode/memory`
 - Memory files use kebab-case naming: `<context-summary>-<YYYYMMDD-HHMMSS>.md`
 - Use lowercase, single-word tags
 - Common tags: `api`, `auth`, `database`, `testing`, `security`, `performance`, `refactoring`, `bugfix`, `architecture`, `convention`

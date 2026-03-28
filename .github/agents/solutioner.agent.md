@@ -2,7 +2,7 @@
 name: Solutioner
 description: "Implements code changes following approved plans and architecture decisions"
 user-invocable: true
-tools: ['read/readFile', 'search', 'edit', 'apex-neural_memory', 'read/problems', 'search/usages', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/listDirectory']
+tools: ['read/readFile', 'search', 'edit', 'apex_neural_memory', 'read/problems', 'search/usages', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/listDirectory']
 ---
 
 # Solutioner Agent — Code Implementation

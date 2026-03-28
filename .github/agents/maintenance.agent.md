@@ -2,7 +2,7 @@
 name: Maintenance
 description: "Runs scheduled maintenance tasks: memory pruning, index rebuilding, health checks, skill enrichment, and custom scheduled jobs"
 user-invocable: true
-tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'apex-neural_memory', 'read/readFile', 'search/listDirectory', 'read/problems']
+tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'apex_neural_memory', 'read/readFile', 'search/listDirectory', 'read/problems']
 ---
 
 # Maintenance Agent — Scheduled Task Runner
