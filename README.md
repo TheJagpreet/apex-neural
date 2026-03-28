@@ -81,6 +81,42 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 | **Subagent tracking** | Audit trail | All subagent start/stop events logged with timestamps |
 | **Iteration limits** | Prevent infinite loops | Max 3 plan-architect iterations, max 5 solution-test iterations |
 | **Phase-specific prompts** | Role enforcement | SubagentStart hook injects phase-specific role reminders |
+| **Cross-platform hooks** | Platform independence | All hooks work on Windows, Linux, and macOS via `run-hook.js` dispatcher |
+
+## Cross-Platform Hooks
+
+All hook scripts are cross-platform by design. Each hook has both a PowerShell (`.ps1`) and bash (`.sh`) implementation, with a Node.js dispatcher that automatically selects the right one for the current OS.
+
+### How It Works
+
+```
+                   ┌─────────────────────┐
+                   │  run-hook.js <name>  │
+                   └──────────┬──────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+         Windows          Linux           macOS
+              │               │               │
+              ▼               ▼               ▼
+      <name>.ps1        <name>.sh        <name>.sh
+      (PowerShell)     (bash/sh)        (bash/sh)
+```
+
+- **Windows**: Runs `<name>.ps1` via `pwsh` (PowerShell Core) or `powershell` (Windows PowerShell)
+- **Linux/macOS**: Runs `<name>.sh` via `sh`
+- **Stdin**: JSON input is forwarded from the caller to the script unchanged
+- **Stdout**: Script JSON output is forwarded back to the caller
+
+### Hook Scripts
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| `pre-tool-guard` | PreToolUse | Blocks destructive terminal commands and hook self-modification |
+| `post-edit-lint` | PostToolUse | Runs linter/formatter after file edits; validates JSON |
+| `session-init` | SessionStart | Injects project context, git branch, and memory hints |
+| `subagent-tracker` | SubagentStart/Stop | Logs subagent lifecycle events and injects phase context |
+| `phase-gate` | Stop | Validates required phase outputs before allowing completion |
 
 ## File Structure
 
@@ -108,11 +144,17 @@ A deterministic, multi-phase coding agent workflow built on VS Code's Copilot ag
 ├── schedule.json                # Task schedule definitions and intervals
 ├── scripts/
 │   └── hooks/
-│       ├── session-init.ps1      # Injects project context + time-gated scheduling
-│       ├── post-edit-lint.ps1    # Runs linter + reactive maintenance triggers
-│       ├── pre-tool-guard.ps1    # Blocks dangerous operations
-│       ├── subagent-tracker.ps1  # Logs subagent lifecycle events
-│       └── phase-gate.ps1        # Validates phase outputs before completion
+│       ├── run-hook.js            # Cross-platform hook runner (detects OS)
+│       ├── session-init.ps1       # Injects project context (Windows)
+│       ├── session-init.sh        # Injects project context (Linux/Mac)
+│       ├── post-edit-lint.ps1     # Runs linter + reactive maintenance (Windows)
+│       ├── post-edit-lint.sh      # Runs linter + reactive maintenance (Linux/Mac)
+│       ├── pre-tool-guard.ps1     # Blocks dangerous operations (Windows)
+│       ├── pre-tool-guard.sh      # Blocks dangerous operations (Linux/Mac)
+│       ├── subagent-tracker.ps1   # Logs subagent lifecycle events (Windows)
+│       ├── subagent-tracker.sh    # Logs subagent lifecycle events (Linux/Mac)
+│       ├── phase-gate.ps1         # Validates phase outputs (Windows)
+│       └── phase-gate.sh          # Validates phase outputs (Linux/Mac)
 ├── skills/
 │   ├── codebase-analysis/
 │   │   └── SKILL.md             # Codebase analysis patterns
@@ -177,8 +219,16 @@ Enable these settings for best experience:
 3. The skill auto-loads when relevant to the conversation
 
 ### Adding a New Hook
-1. Add a script to `.github/scripts/hooks/`
-2. Register it in `.github/hooks/safety-and-tracking.json` or in an agent's `hooks` frontmatter
+1. Add both a `.ps1` (Windows) and `.sh` (Linux/Mac) script to `.github/scripts/hooks/`
+2. Register it in `.github/hooks/safety-and-tracking.json` using the cross-platform runner:
+   ```json
+   {
+     "type": "command",
+     "command": "node ./.github/scripts/hooks/run-hook.js <hook-name>",
+     "timeout": 10
+   }
+   ```
+3. Or register it in an agent's `hooks` frontmatter using the same pattern
 
 ## Scheduled Maintenance
 
@@ -186,7 +236,7 @@ The project includes a time-gated maintenance system that keeps the memory syste
 
 ### How It Works
 
-Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init.ps1` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
+Maintenance tasks are defined in `.github/schedule.json` with configurable intervals. On every session start, the `session-init` hook checks which tasks are overdue and runs only those, tracking execution timestamps in `.github/memory/schedule-state.json`.
 
 | Task | Interval | What It Does |
 |------|---------|---------------|
@@ -212,13 +262,15 @@ Edit `.github/schedule.json` to add tasks, change intervals, or disable tasks:
     {
       "name": "my-task",
       "description": "What this task does",
-      "command": ".github/scripts/my-script.ps1",
+      "command": ".github/scripts/hooks/my-script",
       "interval": "12h",
       "enabled": true
     }
   ]
 }
 ```
+
+> **Note:** Provide the hook name without extension. The cross-platform runner (`run-hook.js`) automatically selects `.ps1` on Windows or `.sh` on Linux/Mac.
 
 Supported interval units: `h` (hours), `d` (days), `m` (minutes).
 
