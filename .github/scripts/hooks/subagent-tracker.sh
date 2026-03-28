@@ -44,6 +44,9 @@ if [ "$HOOK_EVENT" = "SubagentStart" ]; then
         Maintenance)
             PHASE_CONTEXT="You are running MAINTENANCE. Check scheduled tasks, execute overdue ones, and report results. Do NOT modify source code or agent definitions."
             ;;
+        SkillCreator)
+            PHASE_CONTEXT="You are running SKILL CREATION. Create, edit, or improve skills in .github/skills/. Register new skills in plugin.json."
+            ;;
     esac
 
     if [ -n "$PHASE_CONTEXT" ]; then
