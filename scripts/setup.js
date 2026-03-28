@@ -325,8 +325,13 @@ async function main() {
     log(`  1. Open the workspace folder in VS Code`);
     log(`  2. Enable these settings in your VS Code settings:`);
     log(`     ${CYAN}"chat.useCustomAgentHooks": true${RESET}`);
+    log(`     ${CYAN}"chat.plugins.enabled": true${RESET}`);
     log(`  3. Ensure the ${BOLD}apex-neural-memory${RESET} extension is installed`);
     log(`  4. Open VS Code Chat and select ${BOLD}Orchestrator${RESET} to get started`);
+    log("");
+    info("Alternative: Install as a VS Code Copilot agent plugin:");
+    log(`  Run ${CYAN}Chat: Install Plugin From Source${RESET} in the Command Palette`);
+    log(`  and enter: ${CYAN}https://github.com/TheJagpreet/apex-neural${RESET}`);
     log("");
   } finally {
     rl.close();

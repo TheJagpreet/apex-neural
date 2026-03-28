@@ -2,7 +2,7 @@
 name: Architect
 description: "Validates plans against codebase patterns, identifies reuse opportunities, and makes design decisions"
 user-invocable: true
-tools: ['read/readFile', 'search', 'search/codebase', 'read/problems', 'apex-neural_memory', 'search/usages', 'web/fetch', 'search/listDirectory']
+tools: ['read/readFile', 'search', 'search/codebase', 'read/problems', 'apex_neural_memory', 'search/usages', 'web/fetch', 'search/listDirectory']
 ---
 
 # Architect Agent — Design Validation & Architecture Decisions
