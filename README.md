@@ -520,7 +520,10 @@ The `plugin.json` manifest at the repository root declares the following compone
 |-----------|------|-------------|
 | **Agents** | `.github/agents/` | Orchestrator, Planner, Architect, Solutioner, Tester, Maintenance |
 | **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy |
-| **Hooks** | `.github/hooks/safety-and-tracking.json` | Pre-tool guard, post-edit lint, session init, subagent tracker, phase gate |
+| **Hooks** | `hooks.json` | Pre-tool guard, post-edit lint, session init, subagent tracker, phase gate |
+| **Hook scripts** | `.github/scripts/hooks/` | Cross-platform scripts (`run-hook.js`, `.sh`, `.ps1`) referenced by hooks |
+
+> **How hooks work in plugin mode:** The plugin-root `hooks.json` uses `${CLAUDE_PLUGIN_ROOT}` tokens so VS Code resolves paths to the hook scripts within the installed plugin directory. The workspace-level `safety-and-tracking.json` (used by the setup script) uses relative paths instead.
 
 ### Manage the Plugin
 
@@ -565,6 +568,7 @@ Ensure the **apex-neural-memory** extension is installed (the setup script offer
 ```
 apex-neural/
 ├── plugin.json                              # Agent plugin manifest (VS Code Copilot)
+├── hooks.json                               # Plugin hooks with ${CLAUDE_PLUGIN_ROOT} paths
 ├── .github/
 │   ├── agents/                          # Agent definitions
 │   │   ├── orchestrator.agent.md          # Main coordinator

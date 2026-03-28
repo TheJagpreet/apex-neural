@@ -28,5 +28,5 @@
     ".github/skills/implementation-patterns",
     ".github/skills/test-strategy"
   ],
-  "hooks": ".github/hooks/safety-and-tracking.json"
+  "hooks": "hooks.json"
 }
