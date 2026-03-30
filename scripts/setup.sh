@@ -28,6 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SOURCE_GITHUB="$REPO_ROOT/.github"
 SOURCE_README="$REPO_ROOT/README.md"
+SOURCE_MCP_JSON="$REPO_ROOT/.vscode/mcp.json"
 EXTENSION_DIR="$REPO_ROOT/extensions/apex-neural-memory"
 
 # ─── Parse arguments ─────────────────────────────────────────────────────────
@@ -80,6 +81,8 @@ WORKSPACE_ROOT="$(cd "$WORKSPACE_ROOT" 2>/dev/null && pwd)" || {
 
 DEST_GITHUB="$WORKSPACE_ROOT/.github"
 DEST_README="$DEST_GITHUB/apex-neural-README.md"
+DEST_VSCODE="$WORKSPACE_ROOT/.vscode"
+DEST_MCP_JSON="$DEST_VSCODE/mcp.json"
 
 # Count source files
 FILE_COUNT=$(find "$SOURCE_GITHUB" -type f | wc -l | tr -d ' ')
@@ -91,7 +94,8 @@ echo ""
 printf "  ${BOLD}1.${RESET} Copy ${CYAN}.github/${RESET} → ${CYAN}%s${RESET}\n" "$DEST_GITHUB"
 printf "     (%s files)\n" "$FILE_COUNT"
 printf "  ${BOLD}2.${RESET} Copy ${CYAN}README.md${RESET} → ${CYAN}%s${RESET}\n" "$DEST_README"
-printf "  ${BOLD}3.${RESET} Install VS Code extension: ${CYAN}apex-neural-memory${RESET}\n"
+printf "  ${BOLD}3.${RESET} Copy ${CYAN}.vscode/mcp.json${RESET} → ${CYAN}%s${RESET} (Playwright MCP server)\n" "$DEST_MCP_JSON"
+printf "  ${BOLD}4.${RESET} Install VS Code extension: ${CYAN}apex-neural-memory${RESET}\n"
 echo ""
 
 if [ -d "$DEST_GITHUB" ]; then
@@ -122,7 +126,17 @@ info "Copying README.md..."
 cp "$SOURCE_README" "$DEST_README"
 success "README.md copied as $DEST_README"
 
-# ─── Step 3: Install extension ───────────────────────────────────────────────
+# ─── Step 3: Copy .vscode/mcp.json ─────────────────────────────────────────
+if [ -f "$SOURCE_MCP_JSON" ]; then
+  info "Copying .vscode/mcp.json (Playwright MCP server config)..."
+  mkdir -p "$DEST_VSCODE"
+  cp "$SOURCE_MCP_JSON" "$DEST_MCP_JSON"
+  success ".vscode/mcp.json copied to $DEST_MCP_JSON"
+else
+  warn ".vscode/mcp.json not found in the repository — skipping MCP config."
+fi
+
+# ─── Step 4: Install extension ───────────────────────────────────────────────
 VSIX_PATH=""
 if [ -d "$EXTENSION_DIR" ]; then
   VSIX_PATH=$(find "$EXTENSION_DIR" -maxdepth 1 -name "*.vsix" -type f | head -1)

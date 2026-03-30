@@ -9,10 +9,15 @@ When creating tests or test plans, follow this structured approach.
 
 ## Test Pyramid
 
-Prioritize tests in this order (most → fewest):
+Prioritize tests in this order (most to fewest):
 1. **Unit tests**: Fast, isolated, test single functions/methods
 2. **Integration tests**: Test component interactions, API contracts
 3. **End-to-end tests**: Full workflow tests (use sparingly)
+
+For language-specific and domain-specific testing guidance, also see:
+- **frontend-testing** skill — Playwright MCP-based browser and E2E testing
+- **nodejs-testing** skill — Node.js/TypeScript testing patterns (Jest, Vitest, Mocha, node:test)
+- **python-testing** skill — Python testing patterns (pytest, Django, Flask, FastAPI)
 
 ## Discovering Project Test Setup
 
