@@ -83,15 +83,40 @@ git clone https://github.com/TheJagpreet/apex-neural.git
 
 ### 2. Run Setup
 
+Choose the setup method for your platform:
+
+**Node.js (all platforms):**
 ```bash
 cd apex-neural
 node scripts/setup.js
+```
+
+**Bash (Linux / macOS):**
+```bash
+cd apex-neural
+./scripts/setup.sh
+```
+
+**PowerShell (Windows / cross-platform):**
+```powershell
+cd apex-neural
+.\scripts\setup.ps1
+```
+
+**Windows Batch:**
+```cmd
+cd apex-neural
+scripts\setup.cmd
 ```
 
 Or pass the workspace path directly:
 
 ```bash
 node scripts/setup.js --workspace /path/to/workspace
+./scripts/setup.sh --workspace /path/to/workspace
+```
+```powershell
+.\scripts\setup.ps1 -Workspace C:\path\to\workspace
 ```
 
 The setup script will:
@@ -122,33 +147,33 @@ The Orchestrator coordinates a strict four-phase pipeline. Each phase runs in an
                           └────────┬─────────┘
                                    │
                                    ▼
-          ┌────────────────────────────────────────────────┐
-          │               🎯 ORCHESTRATOR                   │
-          │                                                 │
-          │  Coordinates all phases. Never writes code.     │
-          │  Tools: agent, #apex_neural_memory, read, search       │
-          │  Hooks: SessionStart, SubagentStart/Stop, Stop  │
-          └──┬─────────┬──────────┬──────────┬──────┬──────┘
-             │         │          │          │      │
-          Phase 1   Phase 2   Phase 3   Phase 4  On Demand
-             │         │          │          │      │
-             ▼         ▼          ▼          ▼      ▼
-          ┌──────┐ ┌────────┐ ┌────────┐ ┌──────┐ ┌───────────┐
-          │PLAN- │ │ARCHI-  │ │SOLUT-  │ │TEST- │ │MAINTEN-   │
-          │NER   │ │TECT    │ │IONER   │ │ER    │ │ANCE       │
-          │      │ │        │ │        │ │      │ │           │
-          │Read  │ │Read    │ │Full    │ │Edit  │ │Run        │
-          │Only  │ │Only    │ │Edit    │ │+ Run │ │+ Report   │
-          └──┬───┘ └──┬─────┘ └──┬─────┘ └──┬───┘ └─────┬─────┘
-             │        │          │          │           │
-             ▼        ▼          ▼          ▼           ▼
-          ┌──────────────────────────────────────────────────┐
-          │          📁 SESSION MEMORY (.github/memory/)      │
-          │                                                   │
-          │  current-plan.md ──→ architecture-decision.md     │
-          │                 ──→ implementation-log.md          │
-          │                 ──→ test-results.md                │
-          └──────────────────────────────────────────────────┘
+          ┌────────────────────────────────────────────────────────────┐
+          │               🎯 ORCHESTRATOR                               │
+          │                                                             │
+          │  Coordinates all phases. Never writes code.                 │
+          │  Tools: agent, #apex_neural_memory, read, search           │
+          │  Hooks: SessionStart, SubagentStart/Stop, Stop             │
+          └──┬─────────┬──────────┬──────────┬──────┬──────┬──────────┘
+             │         │          │          │      │      │
+          Phase 1   Phase 2   Phase 3   Phase 4  On Demand Standalone
+             │         │          │          │      │      │
+             ▼         ▼          ▼          ▼      ▼      ▼
+          ┌──────┐ ┌────────┐ ┌────────┐ ┌──────┐ ┌─────┐ ┌─────────┐
+          │PLAN- │ │ARCHI-  │ │SOLUT-  │ │TEST- │ │MAIN-│ │SKILL    │
+          │NER   │ │TECT    │ │IONER   │ │ER    │ │TEN- │ │CREATOR  │
+          │      │ │        │ │        │ │      │ │ANCE │ │         │
+          │Read  │ │Read    │ │Full    │ │Edit  │ │Run  │ │Edit     │
+          │Only  │ │Only    │ │Edit    │ │+ Run │ │+ Rpt│ │+ Create │
+          └──┬───┘ └──┬─────┘ └──┬─────┘ └──┬───┘ └──┬──┘ └────┬────┘
+             │        │          │          │        │         │
+             ▼        ▼          ▼          ▼        ▼         ▼
+          ┌──────────────────────────────────────────────────────────┐
+          │          📁 SESSION MEMORY (.github/memory/)              │
+          │                                                           │
+          │  current-plan.md ──→ architecture-decision.md             │
+          │                 ──→ implementation-log.md                  │
+          │                 ──→ test-results.md                        │
+          └──────────────────────────────────────────────────────────┘
 ```
 
 ### Iteration Loops
@@ -173,7 +198,7 @@ The workflow includes built-in feedback loops with safeguards:
 
 ## 🤖 Agents
 
-Apex Neural ships with six specialized agents. All are user-invocable from VS Code Chat, but the **Orchestrator** is the recommended entry point for full workflow enforcement.
+Apex Neural ships with seven specialized agents. All are user-invocable from VS Code Chat, but the **Orchestrator** is the recommended entry point for full workflow enforcement.
 
 ### Orchestrator *(coordinator — never writes code)*
 
@@ -216,6 +241,13 @@ Runs scheduled maintenance tasks: memory pruning, index rebuilding, health check
 
 - **Tools**: `runInTerminal`, `getTerminalOutput`, `#apex_neural_memory`, `readFile`, `listDirectory`, `problems`
 - **Trigger**: On demand or when overdue tasks are detected at session start
+
+### Skill Creator *(standalone)*
+
+Creates new skills, modifies existing skills, and validates skill structure. Disjoint from the main workflow — can be invoked independently by the user or the Orchestrator.
+
+- **Tools**: `readFile`, `search`, `edit`, `#apex_neural_memory`, `problems`, `listDirectory`, `createFile`, `codebase`
+- **Output**: New or updated skill in `.github/skills/`, registered in `plugin.json`
 
 ---
 
@@ -361,6 +393,7 @@ Skills are auto-loading knowledge modules that provide domain-specific guidance 
 | **codebase-analysis** | Systematic approach to analyzing project structure, patterns, conventions, and dependencies |
 | **implementation-patterns** | Best practices for error handling, input validation, security, and clean code |
 | **test-strategy** | Testing strategies following the test pyramid: unit → integration → end-to-end |
+| **skill-creator** | Guides skill creation, editing, and description optimization for better triggering accuracy |
 
 ### Adding a Skill
 
@@ -518,8 +551,8 @@ The `plugin.json` manifest at the repository root declares the following compone
 
 | Component | Path | Description |
 |-----------|------|-------------|
-| **Agents** | `.github/agents/` | Orchestrator, Planner, Architect, Solutioner, Tester, Maintenance |
-| **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy |
+| **Agents** | `.github/agents/` | Orchestrator, Planner, Architect, Solutioner, Tester, Maintenance, Skill Creator |
+| **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy, Skill Creator |
 | **Hooks** | `hooks.json` | Pre-tool guard, post-edit lint, session init, subagent tracker, phase gate |
 | **Hook scripts** | `.github/scripts/hooks/` | Cross-platform scripts (`run-hook.js`, `.sh`, `.ps1`) referenced by hooks |
 
@@ -576,7 +609,8 @@ apex-neural/
 │   │   ├── architect.agent.md             # Architecture agent
 │   │   ├── solutioner.agent.md            # Implementation agent
 │   │   ├── tester.agent.md                # Testing agent
-│   │   └── maintenance.agent.md           # Maintenance agent
+│   │   ├── maintenance.agent.md           # Maintenance agent
+│   │   └── skill-creator.agent.md         # Skill creation agent
 │   ├── hooks/
 │   │   └── safety-and-tracking.json       # Workspace-level hook registration
 │   ├── memory/                            # Version-controlled memory store
@@ -600,7 +634,8 @@ apex-neural/
 │   ├── skills/                              # Auto-loading knowledge modules
 │   │   ├── codebase-analysis/SKILL.md
 │   │   ├── implementation-patterns/SKILL.md
-│   │   └── test-strategy/SKILL.md
+│   │   ├── test-strategy/SKILL.md
+│   │   └── skill-creator/SKILL.md
 │   ├── copilot-instructions.md              # Global project instructions
 │   ├── schedule.json                        # Maintenance task definitions
 │   └── tool-sets.json                       # Grouped tool collections
@@ -613,7 +648,10 @@ apex-neural/
 │       ├── package.json                       # Extension manifest
 │       └── README.md                          # Extension documentation
 ├── scripts/
-│   └── setup.js                             # Interactive workspace setup
+│   ├── setup.js                             # Interactive workspace setup (Node.js)
+│   ├── setup.sh                             # Interactive workspace setup (Bash — Linux/macOS)
+│   ├── setup.ps1                            # Interactive workspace setup (PowerShell — Windows)
+│   └── setup.cmd                            # Windows batch wrapper
 └── README.md                                # ← You are here
 ```
 

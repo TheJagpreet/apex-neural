@@ -30,6 +30,7 @@ if ($HookEvent -eq 'SubagentStart') {
         'Solutioner'  { "You are in PHASE 3 (SOLUTIONING). Implement code changes following the approved plan and architecture decisions." }
         'Tester'      { "You are in PHASE 4 (TESTING). Write and run tests. Do NOT fix production code — report issues instead." }
         'Maintenance' { "You are running MAINTENANCE. Check scheduled tasks, execute overdue ones, and report results. Do NOT modify source code or agent definitions." }
+        'SkillCreator' { "You are running SKILL CREATION. Create, edit, or improve skills in .github/skills/. Register new skills in plugin.json." }
         default       { $null }
     }
 

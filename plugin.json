@@ -26,7 +26,8 @@
   "skills": [
     ".github/skills/codebase-analysis",
     ".github/skills/implementation-patterns",
-    ".github/skills/test-strategy"
+    ".github/skills/test-strategy",
+    ".github/skills/skill-creator"
   ],
   "hooks": "hooks.json"
 }
