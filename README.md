@@ -28,6 +28,7 @@ It prevents context loss, hallucination, and scope drift by enforcing determinis
 - [Memory System](#-memory-system)
 - [Cross-Platform Hooks](#-cross-platform-hooks)
 - [Skills](#-skills)
+- [MCP Servers (Playwright)](#-mcp-servers-playwright)
 - [Determinism Mechanisms](#-determinism-mechanisms)
 - [Scheduled Maintenance](#-scheduled-maintenance)
 - [Customization](#-customization)
@@ -68,6 +69,8 @@ Apex Neural is designed to sit alongside your project repos in a shared VS Code 
 ```
 workspace/
 ├── .github/              ← Apex Neural agents, hooks, skills (installed by setup)
+├── .vscode/
+│   └── mcp.json          ← MCP server config (Playwright) (installed by setup)
 ├── apex-neural/          ← this repo
 ├── your-project-1/
 ├── your-project-2/
@@ -122,6 +125,7 @@ node scripts/setup.js --workspace /path/to/workspace
 The setup script will:
 - Copy the `.github/` folder (agents, hooks, skills, memory) to the workspace root
 - Copy this README into `.github/` for reference
+- Copy `.vscode/mcp.json` (Playwright MCP server configuration) to the workspace
 - Optionally install the **apex-neural-memory** VS Code extension
 
 ### 3. Start Using It
@@ -393,6 +397,9 @@ Skills are auto-loading knowledge modules that provide domain-specific guidance 
 | **codebase-analysis** | Systematic approach to analyzing project structure, patterns, conventions, and dependencies |
 | **implementation-patterns** | Best practices for error handling, input validation, security, and clean code |
 | **test-strategy** | Testing strategies following the test pyramid: unit → integration → end-to-end |
+| **frontend-testing** | Frontend and E2E testing with the Microsoft Playwright MCP server for browser automation |
+| **nodejs-testing** | Node.js/TypeScript backend testing patterns for Jest, Vitest, Mocha, and node:test |
+| **python-testing** | Python backend testing patterns for pytest, Django, Flask, and FastAPI |
 | **skill-creator** | Guides skill creation, editing, and description optimization for better triggering accuracy |
 
 ### Adding a Skill
@@ -406,6 +413,52 @@ Skills are auto-loading knowledge modules that provide domain-specific guidance 
    ---
    ```
 3. The skill auto-loads when relevant to the conversation
+
+---
+
+## 🌐 MCP Servers (Playwright)
+
+The Tester agent supports the **Model Context Protocol (MCP)** to integrate external tools. The workspace includes a pre-configured Playwright MCP server for browser-based end-to-end testing.
+
+### Configuration
+
+The MCP server is defined in `.vscode/mcp.json` (copied by the setup script):
+
+```json
+{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+### What It Provides
+
+The Playwright MCP server gives agents real-time browser control via the Model Context Protocol:
+
+| Category | Tools |
+|----------|-------|
+| **Navigation** | `browser_navigate`, `browser_navigate_back`, `browser_click`, `browser_type`, `browser_hover`, `browser_press_key` |
+| **Observation** | `browser_snapshot`, `browser_take_screenshot`, `browser_console_messages`, `browser_network_requests` |
+| **Tab management** | `browser_tab_list`, `browser_tab_new`, `browser_tab_select`, `browser_tab_close` |
+| **Page control** | `browser_wait`, `browser_resize`, `browser_evaluate`, `browser_file_upload`, `browser_drag`, `browser_select_option` |
+
+### How It Works
+
+1. VS Code detects the MCP server configuration in `.vscode/mcp.json`
+2. When the Tester agent needs to perform browser-based testing, it calls Playwright MCP tools
+3. The MCP server launches a Chromium browser and executes the requested actions
+4. Results (screenshots, accessibility snapshots, network logs) are returned to the agent
+
+### Requirements
+
+- **Node.js 18+** must be installed (the server uses `npx` to auto-download `@playwright/mcp`)
+- **VS Code 1.100+** with MCP server support enabled
+- First run may take longer as it downloads the Playwright browser binaries
 
 ---
 
@@ -552,9 +605,10 @@ The `plugin.json` manifest at the repository root declares the following compone
 | Component | Path | Description |
 |-----------|------|-------------|
 | **Agents** | `.github/agents/` | Orchestrator, Planner, Architect, Solutioner, Tester, Maintenance, Skill Creator |
-| **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy, Skill Creator |
+| **Skills** | `.github/skills/` | Codebase Analysis, Implementation Patterns, Test Strategy, Frontend Testing, Node.js Testing, Python Testing, Skill Creator |
 | **Hooks** | `hooks.json` | Pre-tool guard, post-edit lint, session init, subagent tracker, phase gate |
 | **Hook scripts** | `.github/scripts/hooks/` | Cross-platform scripts (`run-hook.js`, `.sh`, `.ps1`) referenced by hooks |
+| **MCP config** | `.vscode/mcp.json` | Playwright MCP server for browser-based E2E testing |
 
 > **How hooks work in plugin mode:** The plugin-root `hooks.json` uses `${CLAUDE_PLUGIN_ROOT}` tokens so VS Code resolves paths to the hook scripts within the installed plugin directory. The workspace-level `safety-and-tracking.json` (used by the setup script) uses relative paths instead.
 
@@ -635,10 +689,16 @@ apex-neural/
 │   │   ├── codebase-analysis/SKILL.md
 │   │   ├── implementation-patterns/SKILL.md
 │   │   ├── test-strategy/SKILL.md
+│   │   ├── frontend-testing/SKILL.md          # Playwright MCP browser testing
+│   │   ├── nodejs-testing/SKILL.md            # Node.js/TypeScript testing
+│   │   ├── python-testing/SKILL.md            # Python testing
 │   │   └── skill-creator/SKILL.md
 │   ├── copilot-instructions.md              # Global project instructions
 │   ├── schedule.json                        # Maintenance task definitions
 │   └── tool-sets.json                       # Grouped tool collections
+├── .vscode/
+│   ├── launch.json                          # VS Code debug configuration
+│   └── mcp.json                             # MCP server config (Playwright)
 ├── extensions/
 │   └── apex-neural-memory/                  # VS Code extension
 │       ├── src/

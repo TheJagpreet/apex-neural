@@ -175,6 +175,7 @@ async function main() {
   const repoRoot = path.resolve(__dirname, "..");
   const sourceGithub = path.join(repoRoot, ".github");
   const sourceReadme = path.join(repoRoot, "README.md");
+  const sourceMcpJson = path.join(repoRoot, ".vscode", "mcp.json");
   const extensionDir = path.join(repoRoot, "extensions", "apex-neural-memory");
   const vsixPath = (() => {
     try {
@@ -231,6 +232,8 @@ async function main() {
 
     const destGithub = path.join(workspaceRoot, ".github");
     const destReadme = path.join(destGithub, "apex-neural-README.md");
+    const destVscode = path.join(workspaceRoot, ".vscode");
+    const destMcpJson = path.join(destVscode, "mcp.json");
     const fileCount = countFiles(sourceGithub);
 
     // ── Summary ─────────────────────────────────────────────────────────
@@ -247,7 +250,10 @@ async function main() {
       `  ${BOLD}2.${RESET} Copy ${CYAN}README.md${RESET} → ${CYAN}${destReadme}${RESET}`
     );
     log(
-      `  ${BOLD}3.${RESET} Install VS Code extension: ${CYAN}apex-neural-memory${RESET}`
+      `  ${BOLD}3.${RESET} Copy ${CYAN}.vscode/mcp.json${RESET} → ${CYAN}${destMcpJson}${RESET} (Playwright MCP server)`
+    );
+    log(
+      `  ${BOLD}4.${RESET} Install VS Code extension: ${CYAN}apex-neural-memory${RESET}`
     );
     log("");
 
@@ -276,7 +282,17 @@ async function main() {
     fs.copyFileSync(sourceReadme, destReadme);
     success(`README.md copied as ${destReadme}`);
 
-    // ── Step 3: Install extension ───────────────────────────────────────
+    // ── Step 3: Copy .vscode/mcp.json ───────────────────────────────────
+    if (fs.existsSync(sourceMcpJson)) {
+      info("Copying .vscode/mcp.json (Playwright MCP server config)...");
+      fs.mkdirSync(destVscode, { recursive: true });
+      fs.copyFileSync(sourceMcpJson, destMcpJson);
+      success(`.vscode/mcp.json copied to ${destMcpJson}`);
+    } else {
+      warn(".vscode/mcp.json not found in the repository — skipping MCP config.");
+    }
+
+    // ── Step 4: Install extension ───────────────────────────────────────
     if (!vsixPath) {
       warn(
         "No .vsix file found in extensions/apex-neural-memory/."

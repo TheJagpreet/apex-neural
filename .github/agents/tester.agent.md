@@ -2,7 +2,7 @@
 name: Tester
 description: "Writes tests, runs test suites, and validates implementations against acceptance criteria"
 user-invocable: true
-tools: ['read/readFile', 'search', 'edit', 'apex_neural_memory', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/usages', 'execute/testFailure', 'search/listDirectory']
+tools: ['read/readFile', 'search', 'edit', 'apex_neural_memory', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/usages', 'execute/testFailure', 'search/listDirectory', 'mcp/playwright/browser_navigate', 'mcp/playwright/browser_click', 'mcp/playwright/browser_type', 'mcp/playwright/browser_select_option', 'mcp/playwright/browser_hover', 'mcp/playwright/browser_drag', 'mcp/playwright/browser_press_key', 'mcp/playwright/browser_snapshot', 'mcp/playwright/browser_take_screenshot', 'mcp/playwright/browser_console_messages', 'mcp/playwright/browser_network_requests', 'mcp/playwright/browser_tab_list', 'mcp/playwright/browser_tab_new', 'mcp/playwright/browser_tab_select', 'mcp/playwright/browser_tab_close', 'mcp/playwright/browser_file_upload', 'mcp/playwright/browser_wait', 'mcp/playwright/browser_resize', 'mcp/playwright/browser_evaluate', 'mcp/playwright/browser_navigate_back']
 ---
 
 # Tester Agent — Test Creation & Validation
@@ -41,6 +41,19 @@ For each acceptance criterion in the plan:
 - Test interactions between components
 - Verify that modules work together correctly
 - Test API contracts if applicable
+
+#### Frontend / End-to-End Tests (if applicable)
+When the project has a web UI, use the **Playwright MCP** tools (configured in `.vscode/mcp.json`) to perform browser-based end-to-end tests. See the `frontend-testing` skill for detailed patterns.
+- Use `browser_navigate` to load the application
+- Use `browser_snapshot` to validate the accessibility tree
+- Use `browser_click`, `browser_type` to interact with the UI
+- Use `browser_take_screenshot` for visual evidence
+- Use `browser_console_messages` to detect JavaScript errors
+- Use `browser_network_requests` to validate API calls
+
+#### Language-Specific Guidance
+- For **Node.js/TypeScript** projects, refer to the `nodejs-testing` skill for framework-specific patterns (Jest, Vitest, Mocha, node:test)
+- For **Python** projects, refer to the `python-testing` skill for framework-specific patterns (pytest, Django, Flask, FastAPI)
 
 ### Step 3: Run Tests
 - Execute the test suite using the project's test runner
