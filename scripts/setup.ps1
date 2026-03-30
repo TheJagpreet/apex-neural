@@ -44,6 +44,7 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptDir
 $SourceGithub = Join-Path $RepoRoot ".github"
 $SourceReadme = Join-Path $RepoRoot "README.md"
+$SourceMcpJson = Join-Path $RepoRoot ".vscode" "mcp.json"
 $ExtensionDir = Join-Path $RepoRoot "extensions" "apex-neural-memory"
 
 # ─── Validate sources ────────────────────────────────────────────────────────
@@ -85,6 +86,8 @@ if (-not (Test-Path $WorkspaceRoot)) {
 
 $DestGithub = Join-Path $WorkspaceRoot ".github"
 $DestReadme = Join-Path $DestGithub "apex-neural-README.md"
+$DestVscode = Join-Path $WorkspaceRoot ".vscode"
+$DestMcpJson = Join-Path $DestVscode "mcp.json"
 $FileCount = Get-FileCountRecursive $SourceGithub
 
 # ─── Summary ─────────────────────────────────────────────────────────────────
@@ -95,7 +98,8 @@ Write-Host ""
 Write-Host "  1. Copy .github/ → $DestGithub"
 Write-Host "     ($FileCount files)"
 Write-Host "  2. Copy README.md → $DestReadme"
-Write-Host "  3. Install VS Code extension: apex-neural-memory"
+Write-Host "  3. Copy .vscode/mcp.json → $DestMcpJson (Playwright MCP server)"
+Write-Host "  4. Install VS Code extension: apex-neural-memory"
 Write-Host ""
 
 if (Test-Path $DestGithub) {
@@ -123,7 +127,20 @@ Write-Info "Copying README.md..."
 Copy-Item -Path $SourceReadme -Destination $DestReadme -Force
 Write-Success "README.md copied as $DestReadme"
 
-# ─── Step 3: Install extension ───────────────────────────────────────────────
+# ─── Step 3: Copy .vscode/mcp.json ─────────────────────────────────────────
+
+if (Test-Path $SourceMcpJson) {
+    Write-Info "Copying .vscode/mcp.json (Playwright MCP server config)..."
+    if (-not (Test-Path $DestVscode)) {
+        New-Item -ItemType Directory -Path $DestVscode -Force | Out-Null
+    }
+    Copy-Item -Path $SourceMcpJson -Destination $DestMcpJson -Force
+    Write-Success ".vscode/mcp.json copied to $DestMcpJson"
+} else {
+    Write-Warn ".vscode/mcp.json not found in the repository — skipping MCP config."
+}
+
+# ─── Step 4: Install extension ───────────────────────────────────────────────
 
 $VsixPath = $null
 if (Test-Path $ExtensionDir) {

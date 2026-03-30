@@ -27,6 +27,9 @@
     ".github/skills/codebase-analysis",
     ".github/skills/implementation-patterns",
     ".github/skills/test-strategy",
+    ".github/skills/frontend-testing",
+    ".github/skills/nodejs-testing",
+    ".github/skills/python-testing",
     ".github/skills/skill-creator"
   ],
   "hooks": "hooks.json"
