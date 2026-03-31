@@ -71,3 +71,32 @@ outcome: completed
 - All new code must have tests
 - Match existing test patterns and frameworks
 - Tests must pass before any task is considered complete
+
+## Human-in-the-Loop (HITL)
+
+The workflow supports optional **Human-in-the-Loop checkpoints** where the Orchestrator pauses to get user approval before advancing to the next phase. This is configured in `.github/workflow-config.json`.
+
+### Configuration
+
+The `humanInTheLoop` section in `.github/workflow-config.json` controls HITL behavior:
+
+- **Top-level toggle** (`humanInTheLoop.enabled`): Master switch for all HITL checkpoints. Set to `false` to disable all HITL pauses.
+- **Per-agent toggles** (`humanInTheLoop.agents.<agent>.enabled`): Fine-grained control per agent. Both the top-level and the agent-specific flag must be `true` for the checkpoint to activate.
+
+### Currently Supported Checkpoints
+
+| Agent    | When it pauses                              | What the user reviews        |
+|----------|---------------------------------------------|------------------------------|
+| Planner  | After the Planner produces an implementation plan | The full implementation plan |
+
+### How to Toggle
+
+To disable HITL entirely, set the top-level flag to `false`:
+```json
+{ "humanInTheLoop": { "enabled": false, ... } }
+```
+
+To disable HITL only for the Planner while keeping the system ready for future agents:
+```json
+{ "humanInTheLoop": { "enabled": true, "agents": { "planner": { "enabled": false } } } }
+```

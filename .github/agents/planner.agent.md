@@ -71,9 +71,13 @@ Output a structured plan in this EXACT format:
 - [Any unresolved questions for the user]
 ```
 
-### Step 5: Save to Memory
+### Step 5: Signal Plan Completion
+- When the plan is finalized, present it with a clear completion marker so the Orchestrator can identify the plan output for user review.
+- End your response with the complete plan in the format above. Do NOT add commentary after the plan — the Orchestrator will handle next steps.
+
+### Step 6: Save to Memory
 - Save the complete plan as a memory file at `.github/memory/planner/current-plan-<YYYYMMDD-HHMMSS>.md`
-- If revising a plan based on Architect feedback, update the existing plan
+- If revising a plan based on Architect feedback or user feedback from a Human-in-the-Loop review, update the existing plan and note what changed
 
 ## Rules
 1. **Read-only**: Never create or modify source code files
@@ -81,3 +85,4 @@ Output a structured plan in this EXACT format:
 3. **Be complete**: Every change needed should be in the plan — no implicit steps
 4. **Be ordered**: Tasks should be in dependency order (prerequisites first)
 5. **Incorporate feedback**: If the Architect provides feedback, revise the plan accordingly and explain what changed
+6. **Handle user feedback**: If the Orchestrator relays user feedback from a Human-in-the-Loop review, the feedback will be provided as the user's plain-text comments. Revise the plan to address the user's requests and clearly note what was changed in the revised plan
