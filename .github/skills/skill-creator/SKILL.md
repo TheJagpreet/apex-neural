@@ -1,11 +1,11 @@
 ---
 name: skill-creator
-description: "Creates new skills, modifies existing skills, and validates skill structure. Use when users want to create a skill from scratch, edit an existing skill, or improve skill descriptions for better triggering accuracy."
+description: "Creates new skills, modifies existing skills, and validates skill structure. Also creates new agents and adds skills to existing agents. Use when users want to create a skill from scratch, edit an existing skill, improve skill descriptions for better triggering accuracy, create a new agent, or add skills to agents."
 ---
 
 # Skill Creator Skill
 
-When asked to create, edit, or improve a skill, follow this structured process.
+When asked to create, edit, or improve a skill — or create agents and add skills to them — follow this structured process.
 
 ## Skill Anatomy
 
@@ -119,6 +119,76 @@ The `description` field in the YAML frontmatter is the primary trigger mechanism
 **Bad:** "Database patterns"
 **Good:** "Provides database design patterns including schema design, query optimization, migrations, and connection management. Use whenever the user mentions databases, SQL, queries, tables, migrations, ORMs, or data modeling."
 
+## Agent Anatomy
+
+Every agent is defined by an `.agent.md` file in `.github/agents/`:
+
+```yaml
+---
+name: <AgentName>                # PascalCase identifier
+description: "<what the agent does>"
+user-invocable: true             # true for standalone agents
+tools: ['<tool-1>', '<tool-2>']  # VS Code Copilot tools the agent can use
+---
+
+# <Agent Name> Agent
+
+Instructions for the agent...
+```
+
+## Creating a New Agent
+
+### Step 1: Capture Intent
+
+Understand what the user wants:
+1. **Role** — What is this agent's core responsibility?
+2. **Tools** — What tools does it need? (file reading, editing, search, terminal, memory)
+3. **Standalone or subagent?** — Can users invoke it directly, or is it only used by other agents?
+4. **Subagents** — Does it need to coordinate other agents?
+
+### Step 2: Research Existing Agents
+
+Before creating:
+- List existing agents in `.github/agents/` to check for overlaps
+- Review agent conventions by reading existing `.agent.md` files
+- Identify which tools are commonly used
+
+### Step 3: Write the Agent
+
+Create the file at `.github/agents/<agent-name>.agent.md`:
+
+**Frontmatter fields:**
+- `name` — PascalCase, unique across all agents
+- `description` — Concise one-liner explaining the agent's role
+- `user-invocable` — Set to `true` for standalone agents
+- `tools` — Array of VS Code Copilot tools the agent can use
+- `agents` — (Optional) Array of subagent names if this agent coordinates others
+
+**Body guidelines:**
+- Start with a clear role statement
+- Define when the agent should act
+- Provide a step-by-step process
+- Specify the expected output format
+- List rules and constraints
+
+### Step 4: Validate the Agent
+
+- [ ] Agent file exists at `.github/agents/<name>.agent.md`
+- [ ] YAML frontmatter has `name`, `description`, and `tools`
+- [ ] `user-invocable` is set appropriately
+- [ ] Instructions are clear and follow project conventions
+- [ ] No significant overlap with existing agents
+
+## Adding Skills to Agents
+
+Skills auto-load based on conversation context when registered in `plugin.json`. To add a skill to an agent:
+
+1. **Ensure the skill exists** — Check `.github/skills/` and `plugin.json`
+2. **Create the skill if needed** — Follow the skill creation process above
+3. **Register in `plugin.json`** — Add the skill path to the `skills` array (this makes it available to all agents)
+4. **Update agent tools** — If the agent needs additional tools to leverage the skill (e.g., `createFile` for a scaffolding skill), add those to the agent's `tools` array
+5. **Update agent instructions** — If needed, add a reference to the skill in the agent's body so it knows when to use the skill's knowledge
+
 ## Output Format
 
 When creating a skill, present it to the user for review:
@@ -138,4 +208,22 @@ When creating a skill, present it to the user for review:
 - [ ] Description triggers on the right contexts
 - [ ] Instructions are clear and actionable
 - [ ] Registered in plugin.json
+```
+
+When creating an agent, present it similarly:
+
+```
+## New Agent: <name>
+
+**Role:** <description summary>
+**Location:** .github/agents/<name>.agent.md
+**User-invocable:** yes/no
+
+### Preview
+<show the full agent content>
+
+### Checklist
+- [ ] Name is unique and descriptive
+- [ ] Tools are appropriate for the role
+- [ ] Instructions are clear and actionable
 ```
