@@ -2,7 +2,7 @@
 name: Orchestrator
 description: "Deterministic coding workflow coordinator: Planning → Architecture → Solutioning → Testing"
 tools: ['agent', 'apex_neural_memory', 'read/readFile', 'search', 'search/codebase', 'read/problems', 'web/fetch', 'search/listDirectory']
-agents: ['Planner', 'Architect', 'Solutioner', 'Tester', 'Maintenance', 'SkillCreator']
+agents: ['Planner', 'Architect', 'Solutioner', 'Tester', 'Maintenance']
 handoffs:
   - label: "Quick Plan"
     agent: Planner
