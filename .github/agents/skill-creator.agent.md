@@ -1,6 +1,6 @@
 ---
 name: SkillCreator
-description: "Creates new skills, modifies existing skills, and validates skill structure. Use when users want to create a skill from scratch, edit an existing skill, or improve skill descriptions for better triggering accuracy."
+description: "Creates new skills, modifies existing skills, and validates skill structure. Also creates new agents and adds skills to existing agents. Use when users want to create a skill from scratch, edit an existing skill, improve skill descriptions for better triggering accuracy, create a new agent, or add skills to agents."
 user-invocable: true
 tools: ['read/readFile', 'search', 'edit', 'apex_neural_memory', 'read/problems', 'search/listDirectory', 'createFile', 'search/codebase']
 ---
