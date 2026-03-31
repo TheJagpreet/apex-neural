@@ -85,4 +85,4 @@ Output a structured plan in this EXACT format:
 3. **Be complete**: Every change needed should be in the plan — no implicit steps
 4. **Be ordered**: Tasks should be in dependency order (prerequisites first)
 5. **Incorporate feedback**: If the Architect provides feedback, revise the plan accordingly and explain what changed
-6. **Handle user feedback**: If the Orchestrator relays user feedback from a Human-in-the-Loop review, revise the plan to address the user's requests and clearly note what was changed in the revised plan
+6. **Handle user feedback**: If the Orchestrator relays user feedback from a Human-in-the-Loop review, the feedback will be provided as the user's plain-text comments. Revise the plan to address the user's requests and clearly note what was changed in the revised plan

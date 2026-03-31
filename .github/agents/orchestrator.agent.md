@@ -63,7 +63,7 @@ Every task MUST flow through these phases in order. Do NOT skip phases.
 
 #### Human-in-the-Loop Checkpoint (after Planning)
 
-Check the `humanInTheLoop.agents.planner.enabled` flag in `.github/workflow-config.json` (the top-level `humanInTheLoop.enabled` must also be `true`). If HITL is enabled for the planner:
+Check the `humanInTheLoop.agents.planner.enabled` flag in `.github/workflow-config.json` (the top-level `humanInTheLoop.enabled` must also be `true`). If any key in the path is missing or undefined, treat HITL as **disabled** for that agent and proceed normally. If HITL is enabled for the planner:
 
 1. **Present the plan** to the user in full. Display it clearly so the user can review the objective, acceptance criteria, affected files, task breakdown, risks, and testing strategy.
 2. **Ask for approval** using a prompt like:
