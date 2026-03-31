@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "description": "Workflow configuration for the Apex Neural agent ecosystem. Controls behavior toggles like Human-in-the-Loop (HITL) checkpoints.",
+  "humanInTheLoop": {
+    "enabled": true,
+    "description": "When enabled, the Orchestrator pauses after the specified agent phases to present output for user review and approval before proceeding to the next phase.",
+    "agents": {
+      "planner": {
+        "enabled": true,
+        "description": "Pause after the Planner completes to present the plan for user review and approval before moving to Architecture."
+      }
+    }
+  }
+}
