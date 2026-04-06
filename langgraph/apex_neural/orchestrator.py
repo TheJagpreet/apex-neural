@@ -26,6 +26,7 @@ from .state import Phase, Verdict, WorkflowState
 
 MAX_PLAN_ARCHITECT_ITERATIONS = 3
 MAX_SOLUTION_TEST_ITERATIONS = 5
+MAX_SUMMARY_LENGTH = 500
 
 
 # ── Routing functions ───────────────────────────────────────────────────
@@ -76,7 +77,7 @@ def complete_node(state: WorkflowState) -> dict:
     summary = (
         "# Workflow Complete ✅\n\n"
         f"## Task\n{state.task_description}\n\n"
-        f"## Plan\n{state.plan[:500]}{'…' if len(state.plan) > 500 else ''}\n\n"
+        f"## Plan\n{state.plan[:MAX_SUMMARY_LENGTH]}{'…' if len(state.plan) > MAX_SUMMARY_LENGTH else ''}\n\n"
         f"## Architecture Verdict\n{state.architecture_verdict.value if state.architecture_verdict else 'N/A'}\n\n"
         f"## Test Verdict\n{state.test_verdict.value if state.test_verdict else 'N/A'}\n\n"
         f"## Iterations\n"

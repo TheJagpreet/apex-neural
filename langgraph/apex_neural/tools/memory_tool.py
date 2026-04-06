@@ -25,6 +25,12 @@ from pydantic import BaseModel, Field
 
 # ── Data model ──────────────────────────────────────────────────────────
 
+# ── Constants ───────────────────────────────────────────────────────────
+
+MAX_CONTENT_PREVIEW = 500
+"""Maximum characters to show when previewing memory content."""
+
+
 class ParsedMemory(BaseModel):
     """A single parsed memory entry."""
 
@@ -156,7 +162,7 @@ def _scan_memories(
             parsed = _parse_frontmatter(raw, agent_name)
             try:
                 parsed.relative_path = str(
-                    md_file.relative_to(memory_root.parent.parent)
+                    md_file.relative_to(memory_root)
                 )
             except ValueError:
                 parsed.relative_path = str(md_file)
@@ -304,8 +310,8 @@ def memory_recall(
                 f"- **Tags**: {', '.join(mem.tags) or '(none)'}",
                 f"- **Outcome**: {mem.outcome}",
                 "",
-                mem.content[:500]
-                + ("\n...(truncated)" if len(mem.content) > 500 else ""),
+                mem.content[:MAX_CONTENT_PREVIEW]
+                + ("\n...(truncated)" if len(mem.content) > MAX_CONTENT_PREVIEW else ""),
                 "",
                 "---",
                 "",
