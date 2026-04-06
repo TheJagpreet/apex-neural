@@ -33,6 +33,7 @@ It prevents context loss, hallucination, and scope drift by enforcing determinis
 - [Scheduled Maintenance](#-scheduled-maintenance)
 - [Customization](#-customization)
 - [Agent Plugin (Preview)](#-agent-plugin-preview)
+- [LangGraph Edition (Python + Ollama)](#-langgraph-edition-python--ollama)
 - [VS Code Settings](#-vs-code-settings)
 - [Repository Structure](#-repository-structure)
 
@@ -634,6 +635,65 @@ Both methods require the **apex-neural-memory** VS Code extension for the memory
 
 ---
 
+## 🐍 LangGraph Edition (Python + Ollama)
+
+Apex Neural also ships with a **standalone Python implementation** of the same deterministic SDLC workflow, built on [LangGraph](https://github.com/langchain-ai/langgraph) and powered by [Ollama](https://ollama.com/) for local LLM inference. This lives in the `langgraph/` directory at the repository root.
+
+### Why LangGraph?
+
+The LangGraph edition provides the same end-to-end agent orchestration without requiring VS Code or GitHub Copilot:
+
+| Feature | VS Code (.github/) | LangGraph (langgraph/) |
+|---------|--------------------|-----------------------|
+| **Runtime** | VS Code Copilot Chat | Python CLI / API |
+| **LLM** | GitHub Copilot | Ollama (local, private) |
+| **Orchestration** | Agent handoffs + hooks | LangGraph StateGraph |
+| **Memory** | VS Code extension (TypeScript) | Python tool (same format) |
+| **Phase gates** | Hook scripts (bash/ps1) | Conditional graph edges |
+| **Iteration limits** | Orchestrator instructions | Graph routing functions |
+
+### Quick Start
+
+```bash
+# 1. Install Ollama and pull a model
+ollama pull llama3.1
+
+# 2. Install Python dependencies
+cd langgraph
+pip install -r requirements.txt
+
+# 3. Run the full SDLC workflow
+python -m apex_neural "Add a REST endpoint for user profile updates"
+
+# 4. Or run maintenance only
+python -m apex_neural --maintenance
+```
+
+### Configuration
+
+| Environment Variable | Default | Description |
+|---------------------|---------|-------------|
+| `OLLAMA_MODEL` | `llama3.1` | Ollama model name |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
+| `OLLAMA_TEMPERATURE` | `0.2` | Sampling temperature |
+| `APEX_MEMORY_ROOT` | `.github/memory` | Memory storage directory |
+
+### Memory Tool
+
+The Python memory tool is a direct port of the TypeScript `MemoryTool` from the `apex-neural-memory` VS Code extension. It stores, recalls, and lists memories as Markdown files with YAML frontmatter — using the exact same file format and directory structure. Both implementations can read each other's memory files.
+
+### Testing
+
+```bash
+cd langgraph
+pip install -e ".[dev]"
+pytest
+```
+
+> See [`langgraph/README.md`](./langgraph/README.md) for the complete LangGraph documentation.
+
+---
+
 ## ⚙ VS Code Settings
 
 Enable these settings for the best experience:
@@ -712,6 +772,19 @@ apex-neural/
 │   ├── setup.sh                             # Interactive workspace setup (Bash — Linux/macOS)
 │   ├── setup.ps1                            # Interactive workspace setup (PowerShell — Windows)
 │   └── setup.cmd                            # Windows batch wrapper
+├── langgraph/                               # LangGraph Python edition
+│   ├── apex_neural/                         # Python package
+│   │   ├── agents/                            # Agent nodes (planner, architect, etc.)
+│   │   ├── tools/
+│   │   │   └── memory_tool.py                 # Python memory tool (store/recall/list)
+│   │   ├── config.py                          # Ollama LLM configuration
+│   │   ├── state.py                           # WorkflowState schema (Pydantic)
+│   │   ├── orchestrator.py                    # LangGraph StateGraph workflow
+│   │   └── main.py                            # CLI entry point
+│   ├── tests/                               # Pytest test suite
+│   ├── pyproject.toml                       # Python project metadata
+│   ├── requirements.txt                     # Dependencies
+│   └── README.md                            # LangGraph documentation
 └── README.md                                # ← You are here
 ```
 

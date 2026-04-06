@@ -105,5 +105,4 @@ class WorkflowState(BaseModel):
         description="Error message if the workflow fails.",
     )
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = {"arbitrary_types_allowed": True}

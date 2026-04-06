@@ -3,10 +3,10 @@
 Usage::
 
     # Run a task through the full SDLC pipeline
-    python -m langgraph.main "Add a REST endpoint for user profiles"
+    python -m apex_neural "Add a REST endpoint for user profiles"
 
     # Run maintenance only
-    python -m langgraph.main --maintenance
+    python -m apex_neural --maintenance
 
 Environment variables::
 

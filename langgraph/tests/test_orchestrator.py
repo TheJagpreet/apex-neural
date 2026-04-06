@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from langgraph.state import Phase, Verdict, WorkflowState
-from langgraph.orchestrator import (
+from apex_neural.state import Phase, Verdict, WorkflowState
+from apex_neural.orchestrator import (
     MAX_PLAN_ARCHITECT_ITERATIONS,
     MAX_SOLUTION_TEST_ITERATIONS,
     build_graph,
