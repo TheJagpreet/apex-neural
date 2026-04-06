@@ -95,10 +95,10 @@ pip install -e ".[dev]"
 
 ```bash
 # Full SDLC workflow
-python -m langgraph.main "Add a REST endpoint for user profile updates"
+python -m apex_neural "Add a REST endpoint for user profile updates"
 
 # Run maintenance only
-python -m langgraph.main --maintenance
+python -m apex_neural --maintenance
 ```
 
 ### 4. Configuration
@@ -118,32 +118,33 @@ Environment variables:
 
 ```
 langgraph/
-├── __init__.py              # Package marker
-├── __main__.py              # python -m langgraph support
-├── main.py                  # CLI entry point
-├── config.py                # Ollama LLM configuration
-├── state.py                 # WorkflowState schema (Pydantic)
-├── orchestrator.py          # LangGraph StateGraph — the core workflow
-├── agents/
-│   ├── __init__.py
-│   ├── planner.py           # Phase 1: Task decomposition & planning
-│   ├── architect.py         # Phase 2: Design validation & review
-│   ├── solutioner.py        # Phase 3: Code implementation
-│   ├── tester.py            # Phase 4: Test creation & validation
-│   └── maintenance.py       # On-demand: Memory system maintenance
-├── tools/
-│   ├── __init__.py
-│   └── memory_tool.py       # Python memory tool (store/recall/list)
-├── memory/
-│   └── __init__.py
+├── apex_neural/                 # Python package
+│   ├── __init__.py              # Package marker
+│   ├── __main__.py              # python -m apex_neural support
+│   ├── main.py                  # CLI entry point
+│   ├── config.py                # Ollama LLM configuration
+│   ├── state.py                 # WorkflowState schema (Pydantic)
+│   ├── orchestrator.py          # LangGraph StateGraph — the core workflow
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── planner.py           # Phase 1: Task decomposition & planning
+│   │   ├── architect.py         # Phase 2: Design validation & review
+│   │   ├── solutioner.py        # Phase 3: Code implementation
+│   │   ├── tester.py            # Phase 4: Test creation & validation
+│   │   └── maintenance.py       # On-demand: Memory system maintenance
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   └── memory_tool.py       # Python memory tool (store/recall/list)
+│   └── memory/
+│       └── __init__.py
 ├── tests/
 │   ├── __init__.py
-│   ├── test_memory_tool.py  # Memory tool unit + integration tests
-│   ├── test_orchestrator.py # Graph structure & routing tests
-│   └── test_config.py       # LLM configuration tests
-├── pyproject.toml           # Python project metadata
-├── requirements.txt         # Dependencies
-└── README.md                # ← You are here
+│   ├── test_memory_tool.py      # Memory tool unit + integration tests
+│   ├── test_orchestrator.py     # Graph structure & routing tests
+│   └── test_config.py           # LLM configuration tests
+├── pyproject.toml               # Python project metadata
+├── requirements.txt             # Dependencies
+└── README.md                    # ← You are here
 ```
 
 ---

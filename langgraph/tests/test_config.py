@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from langgraph.config import get_llm
+from apex_neural.config import get_llm
 
 
 class TestGetLlm:
