@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "apex-neural-langgraph"
+version = "0.1.0"
+description = "Deterministic multi-agent SDLC workflow using LangGraph and Ollama"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "TheJagpreet", url = "https://github.com/TheJagpreet"},
+]
+keywords = [
+    "langgraph", "multi-agent", "orchestration", "sdlc",
+    "planning", "architecture", "testing", "ollama",
+]
+
+dependencies = [
+    "langgraph>=0.4.0",
+    "langchain-ollama>=0.3.0",
+    "langchain-core>=0.3.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[project.scripts]
+apex-neural = "main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
